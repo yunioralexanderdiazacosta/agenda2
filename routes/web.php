@@ -1,5 +1,13 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\Homeworks\CreateHomeworkController;
+use App\Http\Controllers\Homeworks\DeleteHomeworkController;
+use App\Http\Controllers\Homeworks\EditHomeworkController;
+use App\Http\Controllers\Homeworks\MoveHomeworkController;
+use App\Http\Controllers\Homeworks\UpdateHomeworkController;
+use App\Http\Controllers\HomeworksController;
+use App\Http\Controllers\JefesHuertoController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,9 +22,18 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('auth/login');
 });
 
-Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
-    return view('dashboard');
-})->name('dashboard');
+Route::middleware(['auth:sanctum', 'verified'])->group(function(){
+
+    Route::get('/dashboard', DashboardController::class)->name('dashboard');
+    Route::get('/jefes', JefesHuertoController::class)->name('jefes');
+
+    Route::get('/homeworks', HomeworksController::class)->name('homeworks');
+    Route::post('/homework/create', CreateHomeworkController::class)->name('homework.create');
+    Route::get('/homework/{id}/edit', EditHomeworkController::class)->name('homework.edit');
+    Route::put('/homework/{id}/update', UpdateHomeworkController::class)->name('homework.update');
+    Route::post('/homework/{id}/move', MoveHomeworkController::class)->name('homework.move');
+    Route::delete('/homework/{id}/delete', DeleteHomeworkController::class)->name('homework.delete');
+});
