@@ -21,11 +21,11 @@ class PrioritiesSeeder extends Seeder
             ],
             [
                 'name' => 'Media',
-                'color' => '#bf360c'
+                'color' => '#bb4d00'
             ],
             [
                 'name' => 'Alta',
-                'color' => '#bf360c'
+                'color' => '#c62828'
             ]
         ]);
     }

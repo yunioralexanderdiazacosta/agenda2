@@ -120,18 +120,30 @@
             var user_id = $('#user_id').val();
             var priority_id = $('#priority_id').val();
 
-            $.ajax({
-                url: "{{route('homework.create')}}",
-                type: "POST",
-                data: { date, title, description, user_id, priority_id },
-                success: function(data){
-                    if(data.success){
-                        success_message('Insertado correctamente')
-                    }else{
-                        error_message('Ocurrio un error interno')
+            if(date == ''){
+                error_message('Ingrese/seleccione la fecha')
+            }else if(title == ''){
+                error_message('Ingrese el titulo')
+            }else if(description == ''){
+                error_message('Ingresa la descripción')
+            }else if(user_id == ''){
+                error_message('Selecciona el jefe')
+            }else if(priority_id == ''){
+                error_message('Seleccione la prioridad')
+            }else{
+                $.ajax({
+                    url: "{{route('homework.create')}}",
+                    type: "POST",
+                    data: { date, title, description, user_id, priority_id },
+                    success: function(data){
+                        if(data.success){
+                            success_message('Insertado correctamente')
+                        }else{
+                            error_message('Ocurrio un error interno')
+                        }
                     }
-                }
-            })
+                })
+            }
         }
 
         function actualizar()
@@ -144,18 +156,31 @@
             var id = $('#id').val();
             var url = "{{route('homework.update', ":id")}}";
             url = url.replace(":id", id);
-            $.ajax({
-                url: url,
-                type: "PUT",
-                data: { date, title, description, user_id, priority_id },
-                success: function(data){
-                    if(data.success){
-                        success_message('Actualizado correctamente')
-                    }else{
-                        error_message('Ocurrio un error interno');
+
+            if(date == ''){
+                error_message('Ingrese/seleccione la fecha')
+            }else if(title == ''){
+                error_message('Ingrese el titulo')
+            }else if(description == ''){
+                error_message('Ingresa la descripción')
+            }else if(user_id == ''){
+                error_message('Selecciona el jefe')
+            }else if(priority_id == ''){
+                error_message('Seleccione la prioridad')
+            }else{
+                $.ajax({
+                    url: url,
+                    type: "PUT",
+                    data: { date, title, description, user_id, priority_id },
+                    success: function(data){
+                        if(data.success){
+                            success_message('Actualizado correctamente')
+                        }else{
+                            error_message('Ocurrio un error interno');
+                        }
                     }
-                }
-            })
+                })
+            }
         }
 
         function eliminar()
