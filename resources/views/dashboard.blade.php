@@ -44,6 +44,7 @@
                 editable: true,
                 navLinks: true,
                 selectable: true,
+                eventStartEditable: "{{ auth()->user()->hasRole('Admin') }}" ? true : false,
                 selectConstraint:{
                     start: '00:01',
                     end: '23:59',
