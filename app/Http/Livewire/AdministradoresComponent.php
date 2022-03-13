@@ -3,20 +3,19 @@
 namespace App\Http\Livewire;
 
 use App\Models\Field;
-use App\Models\JefeHuertoProfile;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Jantinnerezo\LivewireAlert\LivewireAlert;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Jantinnerezo\LivewireAlert\LivewireAlert;
 
-class JefeComponent extends Component
+class AdministradoresComponent extends Component
 {
     use WithPagination;
     use LivewireAlert;
     protected $paginationTheme = 'bootstrap';
-    public $name, $email, $password = '', $password_confirmation, $field_id, $user_id, $admin_id;
+    public $name, $email, $password = '', $password_confirmation, $field_id;
     public $edit = false;
 
     protected $listeners = [
@@ -25,58 +24,43 @@ class JefeComponent extends Component
 
     protected $validationAttributes = [
         'name' => 'Nombre',
-        'field_id' => 'Campo',
         'email' => 'Correo Electrónico',
-        'password' => 'Contraseña'
+        'password' => 'Contraseña',
+        'field_id' => 'Campo'
     ];
 
     public function render()
     {
-        if(Auth::user()->hasRole('Admin')){
-            $jefes = JefeHuertoProfile::with('jefe')->where('admin_id', Auth::user()->id)->paginate(5);
-            $administradores = [];
-        }else{
-            $jefes = JefeHuertoProfile::with('jefe', 'admin:id,name')->paginate(5);
-            $administradores = User::select('id', 'name')->role('Admin')->get();
-        }
+        $administradores = User::role('Admin')->paginate(5);
         $fields = Field::all();
-        return view('livewire.jefe-component', compact('jefes', 'administradores', 'fields'));
+        return view('livewire.administradores-component', compact('administradores', 'fields'));
     }
 
     private function resetInputFields()
     {
         $this->name = '';
-        $this->field_id = '';
         $this->email = '';
         $this->password = '';
         $this->password_confirmation = '';
-        $this->user_id = '';
-        $this->admin_id = '';
     }
 
     public function store()
     {
         $this->validate([
             'name' => 'required',
-            'field_id' => 'required',
             'email' => 'required|email|max:255|unique:users',
             'password' => 'required|string|confirmed|min:8',
-            'admin_id' => 'sometimes'
+            'field_id' => 'required'
         ]);
-        $user = new User();
+        $user = new  User();
         $user->name = $this->name;
         $user->email = $this->email;
-        $user->field_id = $this->field_id;
         $user->password = Hash::make($this->password);
+        $user->field_id = $this->field_id;
         $user->save();
-        $user->assignRole('JH');
+        $user->assignRole('Admin');
 
-        JefeHuertoProfile::create([
-            'user_id'   => $user->id,
-            'admin_id'  => Auth::user()->hasRole('Admin') ? Auth::user()->id : $this->admin_id
-        ]);
         $this->alert('success', 'Registrado correctamente');
-
         $this->resetInputFields();
         $this->emit('hide-form');
     }
@@ -92,13 +76,10 @@ class JefeComponent extends Component
     {
         $this->edit = true;
         $this->emit('show-form');
-        $this->name = $object['jefe']['name'];
-        $this->field_id = $object['jefe']['field_id'];
-        $this->email = $object['jefe']['email'];
-        $this->user_id = $object['jefe']['id'];
-        if(Auth::user()->hasRole('Gerente')){
-            $this->admin_id = $object['admin_id'];
-        }
+        $this->name = $object['name'];
+        $this->email = $object['email'];
+        $this->field_id = $object['field_id'];
+        $this->user_id = $object['id'];
     }
 
     public function update()
@@ -108,7 +89,7 @@ class JefeComponent extends Component
             'field_id' => 'required',
             'email' => 'required|email|max:255|unique:users,email,' . $this->user_id,
             'password' => 'sometimes|string|confirmed|min:8',
-            'admin_id' => 'sometimes'
+            'field_id' => 'required'
         ]);
 
         $user = User::find($this->user_id);
@@ -121,11 +102,6 @@ class JefeComponent extends Component
         }
         $user->save();
 
-        $jh = JefeHuertoProfile::where('user_id', $user->id)->first();
-        if(Auth::user()->hasRole('Gerente')){
-            $jh->admin_id = $this->admin_id;
-        }
-        $jh->save();
         $this->alert('success', 'Actualizado correctamente');
         $this->resetInputFields();
         $this->emit('hide-form');
@@ -150,8 +126,6 @@ class JefeComponent extends Component
 
     public function confirmed()
     {
-        $jh   =  JefeHuertoProfile::where('user_id', $this->user_id)->first();
-        $jh->delete();
         $user = User::find($this->user_id);
         $user->delete();
         $this->alert('success', 'Eliminado correctamente');

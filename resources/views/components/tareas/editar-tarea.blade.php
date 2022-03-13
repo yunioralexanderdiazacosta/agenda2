@@ -2,12 +2,12 @@
 	<div class="modal-dialog">
 	  	<div class="modal-content">
 			<div class="modal-header">
-				<h5 class="modal-title" id="exampleModalLabel">
-                    @role('Admin')
+				<h5 class="modal-title" id="title_modal">
+                    @hasanyrole('Gerente|Admin')
                         Editar tarea
                     @else
                         Ver tarea
-                    @endrole
+                    @endhasanyrole
 				</h5>
 				<button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">&times;</span>
@@ -30,17 +30,45 @@
 					<textarea class="form-control" @role('JH') readonly @endrole rows="3" id="edit_description" placeholder="Ingresa la descripción"></textarea>
 				</div>
 
-                @role('Admin')
-				<div class="mb-3">
-					<label for="name">Jefe</label>
-					<select class="form-control"  aria-label="jefe" id="edit_user_id">
-						<option value="">Seleccione</option>
-						@foreach($users as $user)
-							<option value="{{$user->user_id}}">{{$user->jefe->name}}</option>
-						@endforeach
-					</select>
-				</div>
-                @endrole
+				@role('Gerente')
+					<div class="mb-3">
+						<label>Para</label><br>
+						<div class="form-check form-check-inline">
+							<input class="form-check-input" type="radio" name="edit_para" id="edit_admin" value=true onclick="editSelectAdmin()">
+							<label class="form-check-label" for="edit_admin">Administrador</label>
+						</div>
+						<div class="form-check form-check-inline">
+							<input class="form-check-input" type="radio" name="edit_para" id="edit_jh" value=false onclick="editSelectJefe()">
+							<label class="form-check-label" for="edit_jh">Jefe de huerto</label>
+						</div>
+					</div>
+				@endrole
+
+				@role('Gerente')
+					<div class="mb-3" id="edit-form-administrador">
+						<label for="user_id">Administrador</label>
+						<select class="form-control" aria-label="administrador" id="edit_admin_id" onclick="getJefes(this.value, '#edit_user_id')">
+							<option value="">Seleccione</option>
+							@foreach($administradores as $admin)
+								<option value="{{$admin->id}}">{{$admin->name}}</option>
+							@endforeach
+						</select>
+					</div>
+				@endrole
+
+				@hasanyrole('Gerente|Admin')
+					<div class="mb-3" id="edit-form-jefe" @role('Gerente') style="display: none" @endrole>
+						<label for="user_id">Jefe</label>
+						<select class="form-control" aria-label="user" id="edit_user_id">
+							<option value="">Seleccione</option>
+							@role('Admin')
+								@foreach($users as $user)
+									<option value="{{$user->user_id}}">{{$user->jefe->name}}</option>
+								@endforeach
+							@endrole
+						</select>
+					</div>
+				@endhasanyrole
 
 				<div class="mb-3">
 					<label for="priority" class="form-label">Prioridad</label>
@@ -53,15 +81,15 @@
 				</div>
 			</div>
 			<div class="modal-footer">
-                @role('Admin')
-                <button type="button" onclick="eliminar()" class="btn btn-danger">Eliminar</button>
-				@endrole
+                @hasanyrole('Gerente|Admin')
+                	<button type="button" onclick="eliminar()" id="eliminar" class="btn btn-danger">Eliminar</button>
+				@endhasanyrole
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-				@role('Admin')
-                <button type="button" onclick="actualizar()" class="btn btn-primary">
-					Guardar
-				</button>
-                @endrole
+				@hasanyrole('Gerente|Admin')
+					<button type="button" onclick="actualizar()" id="actualizar" class="btn btn-primary">
+						Guardar
+					</button>
+                @endhasanyrole
 			</div>
     	</div>
   	</div>

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateJefeHuertoProfilesTable extends Migration
+class AddColumnForAdminToHomework extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,8 @@ class CreateJefeHuertoProfilesTable extends Migration
      */
     public function up()
     {
-        Schema::create('jefe_huerto_profiles', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('admin_id')->constrained('users');
-            $table->foreignId('user_id')->constrained();
-            $table->timestamps();
+        Schema::table('homework', function (Blueprint $table) {
+            $table->boolean('for_admin')->default(false);
         });
     }
 
@@ -28,6 +25,8 @@ class CreateJefeHuertoProfilesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('jefe_huerto_profiles');
+        Schema::table('homework', function (Blueprint $table) {
+            $table->dropColumn('for_admin');
+        });
     }
 }

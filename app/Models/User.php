@@ -28,7 +28,7 @@ class User extends Authenticatable
      * @var string[]
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'name', 'email', 'password', 'field_id'
     ];
 
     /**
@@ -74,5 +74,10 @@ class User extends Authenticatable
     public function jefes()
     {
         return $this->hasMany(JefeHuertoProfile::class, 'admin_id', 'id');
+    }
+
+    public function field()
+    {
+        return $this->belongsTo(Field::class);
     }
 }

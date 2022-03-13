@@ -9,6 +9,11 @@ class Homework extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['date', 'title', 'description', 'user_id', 'priority_id'];
+    protected $fillable = ['date', 'title', 'description', 'user_id', 'priority_id', 'for_admin'];
     protected $hidden = ['created_at', 'updated_at'];
+
+    public function user()
+    {
+        return $this->hasMany(User::class);
+    }
 }

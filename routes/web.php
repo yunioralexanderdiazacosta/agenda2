@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdministradoresController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Homeworks\CreateHomeworkController;
 use App\Http\Controllers\Homeworks\DeleteHomeworkController;
@@ -7,7 +8,10 @@ use App\Http\Controllers\Homeworks\EditHomeworkController;
 use App\Http\Controllers\Homeworks\MoveHomeworkController;
 use App\Http\Controllers\Homeworks\UpdateHomeworkController;
 use App\Http\Controllers\HomeworksController;
+use App\Http\Controllers\Jefes\JefesAdministradorController;
 use App\Http\Controllers\JefesHuertoController;
+use App\Models\JefeHuertoProfile;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -28,6 +32,8 @@ Route::get('/', function () {
 Route::middleware(['auth:sanctum', 'verified'])->group(function(){
 
     Route::get('/dashboard', DashboardController::class)->name('dashboard');
+    Route::get('/administradores', AdministradoresController::class)->name('administradores');
+    Route::get('/jefes/{id}/admin', JefesAdministradorController::class)->name('jefes.admin');
     Route::get('/jefes', JefesHuertoController::class)->name('jefes');
 
     Route::get('/homeworks', HomeworksController::class)->name('homeworks');
@@ -36,4 +42,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function(){
     Route::put('/homework/{id}/update', UpdateHomeworkController::class)->name('homework.update');
     Route::post('/homework/{id}/move', MoveHomeworkController::class)->name('homework.move');
     Route::delete('/homework/{id}/delete', DeleteHomeworkController::class)->name('homework.delete');
+    Route::get('/demo', function(){
+        return JefeHuertoProfile::select('admin_id')->where('admin_id', Auth::user()->id)->get()->pluck('admin_id');
+    });
 });

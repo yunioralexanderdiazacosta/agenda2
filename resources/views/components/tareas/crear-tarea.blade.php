@@ -25,13 +25,41 @@
 					<textarea type="text" class="form-control" rows="3" id="description" placeholder="Ingresa la descripción"></textarea>
 				</div>
 
+				@role('Gerente')
 				<div class="mb-3">
-					<label for="user_id">Jefe</label>
-					<select class="form-control"  aria-label="user" id="user_id">
+					<label>Para</label><br>
+					<div class="form-check form-check-inline">
+						<input class="form-check-input" type="radio" name="para" id="admin" value=true onclick="selectAdmin()">
+						<label class="form-check-label" for="inlineRadio1">Administrador</label>
+					  </div>
+					<div class="form-check form-check-inline">
+						<input class="form-check-input" type="radio" name="para" id="jh" value=false onclick="selectJefe()">
+						<label class="form-check-label" for="inlineRadio2">Jefe de huerto</label>
+					</div>
+				</div>
+				@endrole
+
+				@role('Gerente')
+				<div class="mb-3" id="form-administrador" style="display: none">
+					<label for="user_id">Administrador</label>
+					<select class="form-control" aria-label="administrador" id="admin_id" onclick="getJefes(this.value)">
 						<option value="">Seleccione</option>
-						@foreach($users as $user)
-							<option value="{{$user->user_id}}">{{$user->jefe->name}}</option>
+						@foreach($administradores as $admin)
+							<option value="{{$admin->id}}">{{$admin->name}}</option>
 						@endforeach
+					</select>
+				</div>
+				@endrole
+
+				<div class="mb-3" id="form-jefe" @role('Gerente') style="display: none" @endrole>
+					<label for="user_id">Jefe</label>
+					<select class="form-control" aria-label="user" id="user_id">
+						<option value="">Seleccione</option>
+						@role('Admin')
+							@foreach($users as $user)
+								<option value="{{$user->user_id}}">{{$user->jefe->name}}</option>
+							@endforeach
+						@endrole
 					</select>
 				</div>
 

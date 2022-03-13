@@ -1,11 +1,11 @@
 <x-app-layout>
     @include('components.tareas.crear-tarea')
     @include('components.tareas.editar-tarea')
-    @role('Admin')
+    @hasanyrole('Gerente|Admin')
     <button type="button" class="btn btn-primary mb-3 btn-lg"  data-bs-toggle="modal" data-bs-target="#create-homework">
         Agregar
     </button>
-    @endrole
+    @endhasanyrole
 
     <div class="row" style="position: inherit;">
         <div class="col-lg-12">
@@ -44,7 +44,7 @@
                 editable: true,
                 navLinks: true,
                 selectable: true,
-                eventStartEditable: "{{ auth()->user()->hasRole('Admin') }}" ? true : false,
+                eventStartEditable: "{{ auth()->user()->hasRole(['Gerente','Admin']) }}" ? true : false,
                 selectConstraint:{
                     start: '00:01',
                     end: '23:59',
@@ -99,11 +99,51 @@
                         success: function(response){
                             $('#edit-homework').modal('show');
                             $('#id').val(arg.event.id);
-                            $('#edit_date').val(response.date);
-                            $('#edit_title').val(response.title);
-                            $('#edit_description').val(response.description);
-                            $('#edit_user_id').val(response.user_id);
-                            $('#edit_priority_id').val(response.priority_id);
+                            $('#edit_date').val(response.homework.date);
+                            $('#edit_title').val(response.homework.title);
+                            $('#edit_description').val(response.homework.description);
+                            if(response.homework.for_admin == 1){
+                                $('#edit-form-jefe').hide();
+                                $('#edit_admin').prop('checked', true);
+                                $('#edit_admin_id').val(response.homework.user_id);
+                                $("#eliminar").hide();
+                                $("#actualizar").hide();
+                                $("#title_modal").text('Ver tarea');
+                                if("{{ auth()->user()->hasRole('Admin') }}"){
+                                    $("#edit_date").prop('readonly', true);
+                                    $("#edit_title").prop('readonly', true);
+                                    $("#edit_description").prop('readonly', true);
+                                    $("#edit_priority_id").css("pointer-events", "none");
+                                }else{
+                                    $("#eliminar").show();
+                                    $("#actualizar").show();
+                                    $("#title_modal").text('Editar tarea');
+                                    $("#edit_date").prop('readonly', false);
+                                    $("#edit_title").prop('readonly', false);
+                                    $("#edit_description").prop('readonly', false);
+                                    $("#edit_priority_id").css("pointer-events", "auto");
+                                }
+                            }else{
+                                $("#eliminar").show();
+                                $("#actualizar").show();
+                                $("#title_modal").text('Editar tarea');
+                                if("{{ auth()->user()->hasRole('Admin') }}"){
+                                    $("#edit_date").prop('readonly', false);
+                                    $("#edit_title").prop('readonly', false);
+                                    $("#edit_description").prop('readonly', false);
+                                    $("#edit_priority_id").css("pointer-events", "auto");
+                                }
+                                if("{{ auth()->user()->hasRole('Gerente') }}"){
+                                    $('#edit-form-jefe').show();
+                                    $('#edit_jh').prop('checked', true);
+                                    $('#edit_admin_id').val(response.admin_id);
+                                    getJefes(response.admin_id, '#edit_user_id', response.homework.user_id);
+                                }else{
+                                    $('#edit-form-jefe').show();
+                                    $('#edit_user_id').val(response.homework.user_id);
+                                }
+                            }
+                            $('#edit_priority_id').val(response.homework.priority_id);
                         }
                     });
                 },
@@ -119,6 +159,12 @@
             var description = $('#description').val();
             var user_id = $('#user_id').val();
             var priority_id = $('#priority_id').val();
+            var for_admin = $('input[name=para]:checked').val();
+            var admin_id = $('#admin_id').val();
+
+            if($('input[name=para]').length <= 0){
+                for_admin = false;
+            }
 
             if(date == ''){
                 error_message('Ingrese/seleccione la fecha')
@@ -126,15 +172,22 @@
                 error_message('Ingrese el titulo')
             }else if(description == ''){
                 error_message('Ingresa la descripción')
-            }else if(user_id == ''){
-                error_message('Selecciona el jefe')
+            }else if(!for_admin && "{{ auth()->user()->hasRole('Gerente') }}"){
+                error_message('Selecciona para quien desea crear la tarea')
+            }else if(admin_id == '' && "{{ auth()->user()->hasRole('Gerente') }}"){
+                error_message('Seleccione el administrador')
+            }else if(for_admin == false && user_id == ''){
+                error_message('Seleccione el jefe de huerto')
             }else if(priority_id == ''){
                 error_message('Seleccione la prioridad')
             }else{
+                if(for_admin == "true"){
+                    user_id = admin_id;
+                }
                 $.ajax({
                     url: "{{route('homework.create')}}",
                     type: "POST",
-                    data: { date, title, description, user_id, priority_id },
+                    data: { date, title, description, user_id, priority_id, for_admin },
                     success: function(data){
                         if(data.success){
                             success_message('Insertado correctamente')
@@ -151,11 +204,17 @@
             var date = $('#edit_date').val();
             var title = $('#edit_title').val();
             var description = $('#edit_description').val();
+            var for_admin = $('input[name=edit_para]:checked').val();
+            var admin_id = $('#edit_admin_id').val();
             var user_id = $('#edit_user_id').val();
             var priority_id = $('#edit_priority_id').val();
             var id = $('#id').val();
             var url = "{{route('homework.update', ":id")}}";
             url = url.replace(":id", id);
+
+            if($('input[name=edit_para]').length <= 0){
+                for_admin = false;
+            }
 
             if(date == ''){
                 error_message('Ingrese/seleccione la fecha')
@@ -163,17 +222,29 @@
                 error_message('Ingrese el titulo')
             }else if(description == ''){
                 error_message('Ingresa la descripción')
-            }else if(user_id == ''){
-                error_message('Selecciona el jefe')
+            }else if(!for_admin && "{{ auth()->user()->hasRole('Gerente') }}"){
+                error_message('Selecciona para quien desea asignar la tarea')
+            }else if(admin_id == '' && "{{ auth()->user()->hasRole('Gerente') }}"){
+                error_message('Seleccione el administrador')
+            }else if(for_admin == false && user_id == ''){
+                error_message('Seleccione el jefe de huerto')
             }else if(priority_id == ''){
                 error_message('Seleccione la prioridad')
             }else{
+                var data = {
+                    date: date,
+                    title: title,
+                    description: description,
+                    user_id: for_admin == "true" ? admin_id : user_id,
+                    priority_id: priority_id,
+                    for_admin: for_admin
+                }
                 $.ajax({
                     url: url,
                     type: "PUT",
-                    data: { date, title, description, user_id, priority_id },
-                    success: function(data){
-                        if(data.success){
+                    data: data,
+                    success: function(response){
+                        if(response.success){
                             success_message('Actualizado correctamente')
                         }else{
                             error_message('Ocurrio un error interno');
@@ -232,6 +303,61 @@
             }).then(function(){
                 window.location = "{{ route('dashboard') }}";
             })
+        }
+
+        function getJefes(admin_id, atrib = '#user_id', user_id = null)
+        {
+            if(admin_id != ''){
+                var url = "{{route('jefes.admin', ":id")}}";
+                url = url.replace(":id", admin_id);
+                $.ajax({
+                    url: url,
+                    dataType: "json",
+                    success: function(response){
+                        $(atrib).empty();
+                        $(atrib).append("<option value=''>Seleccione</option>");
+
+                        $.each(response, function (index, value) {
+                            var selected = value.jefe.id == user_id ? 'selected' : '';
+                            $(atrib).append(`<option value="${value.jefe.id}" ${selected}>${value.jefe.name}</option>`);
+                        })
+                    }
+                });
+            }
+        }
+
+        function selectAdmin()
+        {
+            $('#user_id').empty();
+            $('#user_id').append("<option value=''>Seleccione</option>");
+            $('#form-jefe').hide();
+            $('#form-administrador').show();
+            $('#admin_id').val('');
+        }
+
+        function selectJefe()
+        {
+            $('#form-jefe').show();
+            $('#form-administrador').show();
+            $('#admin_id').val('');
+        }
+
+        function editSelectAdmin()
+        {
+            $('#edit_user_id').empty();
+            $('#edit_user_id').append("<option value=''>Seleccione</option>");
+            $('#edit-form-jefe').hide();
+            $('#edit-form-administrador').show();
+            $('#edit_admin_id').val('');
+        }
+
+        function editSelectJefe()
+        {
+            $('#edit-form-jefe').show();
+            $('#edit-form-administrador').show();
+            $('#edit_admin_id').val('');
+            $('#edit_user_id').empty();
+            $('#edit_user_id').append("<option value=''>Seleccione</option>");
         }
     </script>
     @endpush

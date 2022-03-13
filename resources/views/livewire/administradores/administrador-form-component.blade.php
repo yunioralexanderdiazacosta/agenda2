@@ -5,9 +5,9 @@
 			<div class="modal-header">
 				<h5 class="modal-title" id="exampleModalLabel">
 					@if($edit)
-						Editar jefe de huerto
+						Editar administrador
 					@else
-						Agregar jefe de huerto
+						Agregar administrador
 					@endif
 				</h5>
 				<button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
@@ -15,26 +15,7 @@
 				</button>
 			</div>
 			<div class="modal-body">
-				@role('Gerente')
-					<div class="mb-3">
-						<label for="name">Administrador</label>
-						<select class="form-control @error('admin_id') is-invalid @enderror" wire:model="admin_id" aria-label="Administrador">
-							<option value="">Seleccione</option>
-							@foreach($administradores as $administrador)
-								<option value="{{$administrador->id}}">{{$administrador->name}}</option>
-							@endforeach
-						</select>
-						@error('admin_id') <div class="invalid-feedback">{{ $message }}</div>@enderror
-					</div>
-				@endrole
-
-				<div class="mb-3">
-					<label for="name">Nombre</label>
-					<input type="text" class="form-control @error('name') is-invalid @enderror" id="name" wire:model="name" placeholder="Ingresa el nombre">
-					@error('name') <div class="invalid-feedback">{{ $message }}</div>@enderror
-				</div>
-
-				<div class="mb-3">
+                <div class="mb-3">
 					<label for="name">Campo</label>
 					<select class="form-control @error('field_id') is-invalid @enderror" wire:model="field_id" aria-label="Campo">
 						<option value="">Seleccione</option>
@@ -43,6 +24,12 @@
 						@endforeach
 					</select>
 					@error('field_id') <div class="invalid-feedback">{{ $message }}</div>@enderror
+				</div>
+
+				<div class="mb-3">
+					<label for="name">Nombre</label>
+					<input type="text" class="form-control @error('name') is-invalid @enderror" id="name" wire:model="name" placeholder="Ingresa el nombre">
+					@error('name') <div class="invalid-feedback">{{ $message }}</div>@enderror
 				</div>
 
 				<div class="mb-3">
