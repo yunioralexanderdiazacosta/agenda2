@@ -14,6 +14,10 @@
 				</button>
 			</div>
 			<div class="modal-body">
+				<div class="form-check float-right">
+					<input type="checkbox" class="form-check-input" id="status" onclick="changeStatus()">
+					<label class="form-check-label" for="exampleCheck1">Realizada</label>
+				</div>
                 <input type="hidden" id="id">
                 <div class="mb-3">
                     <label for="date">Fecha</label>

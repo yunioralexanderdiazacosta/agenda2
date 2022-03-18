@@ -102,6 +102,12 @@
                             $('#edit_date').val(response.homework.date);
                             $('#edit_title').val(response.homework.title);
                             $('#edit_description').val(response.homework.description);
+                            if(response.homework.status == 1){
+                                var status = true;
+                            }else{
+                                var status = false;
+                            }
+                            $('#status').prop('checked', status);
                             if(response.homework.for_admin == 1){
                                 $('#edit-form-jefe').hide();
                                 $('#edit_admin').prop('checked', true);
@@ -254,6 +260,35 @@
             }
         }
 
+        function changeStatus()
+        {
+            if($('#status').prop('checked')) {
+                var status = 1;
+            }else{
+                var status = 0
+            }
+            var id = $('#id').val();
+            var url = "{{route('homework.status', ":id")}}";
+            url = url.replace(":id", id);
+            $.ajax({
+                    url: url,
+                    type: "PUT",
+                    data: { status },
+                    success: function(response){
+                        if(response.success){
+                            if(status == 0){
+                                var message = 'Tarea cambiada a pendiente';
+                            }else{
+                                var message = 'Tarea marcada como realizada';
+                            }
+                            success_message(message, false)
+                        }else{
+                            error_message('Ocurrio un error interno');
+                        }
+                    }
+            })
+        }
+
         function eliminar()
         {
             Swal.fire({
@@ -292,7 +327,7 @@
             });
         }
 
-        function success_message(title)
+        function success_message(title, reload = true)
         {
             Swal.fire({
                 position: 'top-end',
@@ -301,7 +336,9 @@
                 showConfirmButton: false,
                 timer: 500
             }).then(function(){
-                window.location = "{{ route('dashboard') }}";
+                if(reload == true){
+                    window.location = "{{ route('dashboard') }}";
+                }
             })
         }
 

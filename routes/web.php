@@ -6,6 +6,7 @@ use App\Http\Controllers\Homeworks\CreateHomeworkController;
 use App\Http\Controllers\Homeworks\DeleteHomeworkController;
 use App\Http\Controllers\Homeworks\EditHomeworkController;
 use App\Http\Controllers\Homeworks\MoveHomeworkController;
+use App\Http\Controllers\Homeworks\StatusHomeworkController;
 use App\Http\Controllers\Homeworks\UpdateHomeworkController;
 use App\Http\Controllers\HomeworksController;
 use App\Http\Controllers\Jefes\JefesAdministradorController;
@@ -40,6 +41,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function(){
     Route::post('/homework/create', CreateHomeworkController::class)->name('homework.create');
     Route::get('/homework/{id}/edit', EditHomeworkController::class)->name('homework.edit');
     Route::put('/homework/{id}/update', UpdateHomeworkController::class)->name('homework.update');
+    Route::put('/homework/{id}/status', StatusHomeworkController::class)->name('homework.status');
     Route::post('/homework/{id}/move', MoveHomeworkController::class)->name('homework.move');
     Route::delete('/homework/{id}/delete', DeleteHomeworkController::class)->name('homework.delete');
     Route::get('/demo', function(){
