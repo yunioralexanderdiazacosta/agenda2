@@ -20,7 +20,7 @@ class HomeworksController extends Controller
             $jh = JefeHuertoProfile::select('user_id')->where('admin_id', Auth::user()->id)->get()->pluck('user_id');
 
             $homeworks = DB::table('users')
-            ->select('homework.id', 'homework.title', 'homework.date', 'priorities.color', 'homework.for_admin')
+            ->select('homework.id', 'homework.title', 'homework.date', 'priorities.color', 'homework.for_admin', 'homework.status')
             ->join('homework', 'users.id', 'homework.user_id')
             ->join('priorities', 'homework.priority_id', 'priorities.id')
             ->whereIn('user_id',  [Auth::user()->id])
@@ -38,11 +38,14 @@ class HomeworksController extends Controller
                 if($homework->for_admin == 1){
                     $data['startEditable'] = false;
                 }
+                if($homework->status == 1){
+                    $data['icon'] = "check";
+                }
                 return $data;
             });
         }else if($user->hasrole('JH')){
             $homeworks = DB::table('users')
-            ->select('homework.id', 'homework.title', 'homework.date', 'priorities.color')
+            ->select('homework.id', 'homework.title', 'homework.date', 'priorities.color', 'homework.status')
             ->join('jefe_huerto_profiles', 'users.id', '=', 'jefe_huerto_profiles.user_id')
             ->join('homework', 'users.id', 'homework.user_id')
             ->join('priorities', 'homework.priority_id', 'priorities.id')
@@ -51,28 +54,36 @@ class HomeworksController extends Controller
             ->whereDate('homework.date',   '<=', $end)
             ->get()
             ->transform(function($homework){
-                return [
+                $data = [
                     'id' => $homework->id,
                     'title' => $homework->title,
                     'start' => $homework->date,
                     'color' => $homework->color
                 ];
+                if($homework->status == 1){
+                    $data['icon'] = "check";
+                }
+                return $data;
             });
         }else if($user->hasrole('Gerente')){
             $homeworks = DB::table('users')
-            ->select('homework.id', 'homework.title', 'homework.date', 'priorities.color', 'homework.for_admin')
+            ->select('homework.id', 'homework.title', 'homework.date', 'priorities.color', 'homework.for_admin', 'homework.status')
             ->join('homework', 'users.id', 'homework.user_id')
             ->join('priorities', 'homework.priority_id', 'priorities.id')
             ->whereDate('homework.date', '>=', $start)
             ->whereDate('homework.date',   '<=', $end)
             ->get()
             ->transform(function($homework){
-                return [
+                $data = [
                     'id' => $homework->id,
                     'title' => $homework->title,
                     'start' => $homework->date,
                     'color' => $homework->for_admin ? '#1565cz0' : $homework->color
                 ];
+                if($homework->status == 1){
+                    $data['icon'] = "check";
+                }
+                return $data;
             });
         }
         return response()->json($homeworks);

@@ -154,6 +154,14 @@
                     });
                 },
 
+                eventDidMount(e){
+                    var i = document.createElement('i');
+                    if(e.event.extendedProps.icon){
+                        i.className = 'fas fa-check float-left text-white';
+                        e.el.prepend(i);
+                    }
+                },
+
             });
             calendar.render();
         });
@@ -281,7 +289,7 @@
                             }else{
                                 var message = 'Tarea marcada como realizada';
                             }
-                            success_message(message, false)
+                            success_message(message, true)
                         }else{
                             error_message('Ocurrio un error interno');
                         }
