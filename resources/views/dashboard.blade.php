@@ -157,7 +157,7 @@
                 eventDidMount(e){
                     var i = document.createElement('i');
                     if(e.event.extendedProps.icon){
-                        i.className = 'fas fa-check float-left text-white';
+                        i.className = 'fas fa-check float-right text-white';
                         e.el.prepend(i);
                     }
                 },
