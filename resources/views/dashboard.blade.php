@@ -157,7 +157,7 @@
                 eventDidMount(e){
                     var i = document.createElement('i');
                     if(e.event.extendedProps.icon){
-                        i.className = 'fas fa-check float-right text-white';
+                        i.className = 'fas fa-check-circle fa-lg float-right text-white mr-2 mt-1';
                         e.el.prepend(i);
                     }
                 },
