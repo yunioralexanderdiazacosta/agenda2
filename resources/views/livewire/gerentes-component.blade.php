@@ -1,9 +1,9 @@
 <div>
-    @include('livewire.administradores.administrador-form-component')
+    @include('livewire.gerentes.gerente-form-component')
     <button type="button" class="btn btn-primary mb-3 btn-lg" wire:click="add">
         Agregar
     </button>
-    @if(count($administradores) > 0)
+    @if(count($gerentes) > 0)
     <div class="table-responsive">
         <table class="table table-striped">
             <thead>
@@ -11,24 +11,18 @@
                 <th scope="col">#</th>
                 <th scope="col">Nombre</th>
                 <th scope="col">Correo Electronico</th>
-                <th scope="col">Campo</th>
-                @role('Administrativo')<th scope="col">Gerente</th>@endrole
                 <th scope="col"></th>
                 </tr>
             </thead>
             <tbody>
-                @foreach ($administradores as $value)
+                @foreach ($gerentes as $value)
                     <tr class="align-middle">
                         <td>{{ $loop->index+1 }}</td>
                         <td>{{ $value->name }}</td>
                         <td>{{ $value->email }}</td>
-                        <td>{{ $value->field_name }}</td>
-                        @role('Administrativo')
-                        <td>{{ $value->gerente }}</td>
-                        @endrole
                         <td>
                             <div class="btn-group">
-                                <button type="button" wire:click="edit({{ $value->id}}, {{$value->gerente_id}})" class="btn btn-outline-primary">Editar</button>
+                                <button type="button" wire:click="edit({{ $value->id }})" class="btn btn-outline-primary">Editar</button>
                                 <button type="button" wire:click="delete({{ $value->id }})"class="btn btn-outline-primary">Borrar</button>
                             </div>
                         </td>
@@ -36,7 +30,7 @@
                 @endforeach
             </tbody>
         </table>
-        {{ $administradores->links() }}
+        {{ $gerentes->links() }}
     </div>
     @else
     <div class="alert alert-primary" role="alert">

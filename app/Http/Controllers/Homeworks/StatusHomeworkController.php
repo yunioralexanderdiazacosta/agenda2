@@ -11,7 +11,8 @@ class StatusHomeworkController extends Controller
     public function __invoke(int $id, Request $request)
     {
         $homework = Homework::find($id);
-        $homework->status = $request->status;
+        $homework->status   = $request->status;
+        $homework->comment  = $request->comment;
         $homework->save();
         return response()->json([
             'success' => true

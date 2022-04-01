@@ -25,21 +25,39 @@
 					<textarea type="text" class="form-control" rows="3" id="description" placeholder="Ingresa la descripción"></textarea>
 				</div>
 
-				@role('Gerente')
+				@role('Administrativo|Gerente')
 				<div class="mb-3">
 					<label>Para</label><br>
+					@role('Administrativo')
 					<div class="form-check form-check-inline">
-						<input class="form-check-input" type="radio" name="para" id="admin" value=true onclick="selectAdmin()">
+						<input class="form-check-input" type="radio" name="para" id="gerente" value=1 onclick="selectGerente()">
+						<label class="form-check-label" for="inlineRadio1">Gerente</label>
+					</div>
+					@endrole
+					<div class="form-check form-check-inline">
+						<input class="form-check-input" type="radio" name="para" id="admin" value=2 onclick="selectAdmin()">
 						<label class="form-check-label" for="inlineRadio1">Administrador</label>
-					  </div>
+					</div>
 					<div class="form-check form-check-inline">
-						<input class="form-check-input" type="radio" name="para" id="jh" value=false onclick="selectJefe()">
+						<input class="form-check-input" type="radio" name="para" id="jh" value=3 onclick="selectJefe()">
 						<label class="form-check-label" for="inlineRadio2">Jefe de huerto</label>
 					</div>
 				</div>
 				@endrole
 
-				@role('Gerente')
+				@role('Administrativo')
+				<div class="mb-3" id="form-gerente" style="display: none">
+					<label for="gerente">Gerente</label>
+					<select class="form-control" aria-label="gerente" id="gerente_id" onclick="getAdmins(this.value)">
+						<option value="">Seleccione</option>
+						@foreach($gerentes as $gerente)
+							<option value="{{$gerente->id}}">{{$gerente->name}}</option>
+						@endforeach
+					</select>
+				</div>
+				@endrole
+
+				@role('Administrativo|Gerente')
 				<div class="mb-3" id="form-administrador" style="display: none">
 					<label for="user_id">Administrador</label>
 					<select class="form-control" aria-label="administrador" id="admin_id" onclick="getJefes(this.value)">
@@ -51,7 +69,7 @@
 				</div>
 				@endrole
 
-				<div class="mb-3" id="form-jefe" @role('Gerente') style="display: none" @endrole>
+				<div class="mb-3" id="form-jefe" @role('Administrativo|Gerente') style="display: none" @endrole>
 					<label for="user_id">Jefe</label>
 					<select class="form-control" aria-label="user" id="user_id">
 						<option value="">Seleccione</option>

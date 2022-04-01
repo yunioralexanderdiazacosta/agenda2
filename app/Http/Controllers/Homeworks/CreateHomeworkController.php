@@ -17,7 +17,7 @@ class CreateHomeworkController extends Controller
         $homework->description = $request->description;
         $homework->user_id = $request->user_id;
         $homework->priority_id = $request->priority_id;
-        $homework->for_admin = $request->for_admin == 'false' ? 0 : 1;
+        $homework->for_admin = $request->for_admin;
         $homework->save();
         return response()->json([
             'success' => true

@@ -2,7 +2,6 @@
 
 namespace App\Http\Livewire;
 
-use App\Models\Field;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -11,12 +10,12 @@ use Jantinnerezo\LivewireAlert\LivewireAlert;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-class AdministradoresComponent extends Component
+class GerentesComponent extends Component
 {
     use WithPagination;
     use LivewireAlert;
     protected $paginationTheme = 'bootstrap';
-    public $name, $email, $password = '', $password_confirmation, $field_id, $gerente_id;
+    public $name, $email, $password = '', $password_confirmation;
     public $edit = false;
 
     protected $listeners = [
@@ -27,50 +26,16 @@ class AdministradoresComponent extends Component
         'name' => 'Nombre',
         'email' => 'Correo Electrónico',
         'password' => 'Contraseña',
-        'field_id' => 'Campo',
-        'gerente_id' => 'Gerente'
     ];
+
 
     public function render()
     {
-        if(Auth::user()->hasRole('Administrativo')){
-            $gerentes = DB::table('admin_users')
+        $gerentes = DB::table('admin_users')
             ->select('users.id', 'users.name', 'users.email')
             ->join('users', 'users.id', 'admin_users.user_id')
             ->where('admin_id', Auth::user()->id)->paginate(5);
-
-            $gerentes_id = DB::table('admin_users')
-            ->select('users.id')
-            ->join('users', 'users.id', 'admin_users.user_id')
-            ->where('admin_id', Auth::user()->id)->get()->pluck('id');
-
-            $administradores = DB::table('admin_users')
-            ->select('a.id', 'a.name', 'a.email', 'fields.name as field_name', 'g.id as gerente_id', 'g.name as gerente')
-            ->join('users as a', 'a.id', 'admin_users.user_id')
-            ->join('users as g', 'g.id', 'admin_users.admin_id')
-            ->join('fields', 'fields.id', 'a.field_id')
-            ->whereIn('admin_id', $gerentes_id)->paginate(5);
-        }else{
-            $gerentes = [];
-            $administradores = DB::table('admin_users')
-            ->select('a.id', 'a.name', 'a.email', 'fields.name as field_name', 'g.id as gerente_id', 'g.name as gerente')
-            ->join('users as a', 'a.id', 'admin_users.user_id')
-            ->join('users as g', 'g.id', 'admin_users.admin_id')
-            ->join('fields', 'fields.id', 'a.field_id')
-            ->where('admin_id', Auth::user()->id)->paginate(5);
-        }
-        $fields = Field::all();
-        return view('livewire.administradores-component', compact('administradores', 'gerentes', 'fields'));
-    }
-
-    private function resetInputFields()
-    {
-        $this->name = '';
-        $this->email = '';
-        $this->password = '';
-        $this->password_confirmation = '';
-        $this->field_id = '';
-        $this->gerente_id = '';
+        return view('livewire.gerentes-component', compact('gerentes'));
     }
 
     public function store()
@@ -80,24 +45,14 @@ class AdministradoresComponent extends Component
             'name' => 'required',
             'email' => 'required|email|max:255|unique:users',
             'password' => 'required|string|confirmed|min:8',
-            'field_id' => 'required',
-            'gerente_id' => 'present'
         ]);
         $user = new  User();
         $user->name = $this->name;
         $user->email = $this->email;
         $user->password = Hash::make($this->password);
-        $user->field_id = $this->field_id;
         $user->save();
-        $user->assignRole('Admin');
-
-        if($admin->hasRole('Administrativo')){
-            $admin_id = $this->gerente_id;
-        }else{
-            $admin_id = $admin->id;
-        }
-        $gerente = User::find($admin_id);
-        $gerente->users()->attach($user->id);
+        $user->assignRole('Gerente');
+        $admin->users()->attach($user->id);
 
         $this->alert('success', 'Registrado correctamente');
         $this->resetInputFields();
@@ -111,35 +66,27 @@ class AdministradoresComponent extends Component
         $this->emit('show-form');
     }
 
-    public function edit($id, $gerente_id = null)
+    public function edit($id)
     {
-        $user_logged = Auth::user();
         $this->edit = true;
-        $admin = User::find($id);
         $this->emit('show-form');
-        $this->name = $admin->name;
-        $this->email = $admin->email;
-        $this->field_id = $admin->field_id;
-        $this->user_id = $admin->id;
-        if($user_logged->hasRole('Administrativo')){
-            $this->gerente_id = $gerente_id;
-        }
+        $user = User::find($id);
+        $this->name = $user->name;
+        $this->email = $user->email;
+        $this->user_id = $user->id;
     }
 
     public function update()
     {
         $this->validate([
             'name' => 'required',
-            'field_id' => 'required',
             'email' => 'required|email|max:255|unique:users,email,' . $this->user_id,
             'password' => 'sometimes|string|confirmed|min:8',
-            'field_id' => 'required'
         ]);
 
         $user = User::find($this->user_id);
         $user->name = $this->name;
         $user->email = $this->email;
-        $user->field_id = $this->field_id;
         if($this->password != '' || $this->password != null)
         {
             $user->password = Hash::make($this->password);
@@ -153,15 +100,6 @@ class AdministradoresComponent extends Component
 
     public function delete($id)
     {
-        $admin = Auth::user();
-        if($admin->hasRole('Administrativo')){
-            $admin_id = $this->gerente_id;
-        }else{
-            $admin_id = $admin->id;
-        }
-        $gerente = User::find($admin_id);
-        $gerente->users()->attach($this->user_id);
-
         $this->user_id = $id;
         $this->alert('question', '¿Esta seguro que desea remover el registro?', [
             'position' => 'center',
@@ -179,8 +117,18 @@ class AdministradoresComponent extends Component
 
     public function confirmed()
     {
+        $admin = Auth::user();
+        $admin->users()->detach($this->user_id);
         $user = User::find($this->user_id);
         $user->delete();
         $this->alert('success', 'Eliminado correctamente');
+    }
+
+    private function resetInputFields()
+    {
+        $this->name = '';
+        $this->email = '';
+        $this->password = '';
+        $this->password_confirmation = '';
     }
 }

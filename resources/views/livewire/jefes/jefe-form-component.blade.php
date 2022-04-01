@@ -15,14 +15,29 @@
 				</button>
 			</div>
 			<div class="modal-body">
-				@role('Gerente')
+				@role('Administrativo')
 					<div class="mb-3">
-						<label for="name">Administrador</label>
+						<label for="gerente">Gerente</label>
+						<select class="form-control @error('gerente_id') is-invalid @enderror" wire:model="gerente_id" aria-label="Gerente">
+							<option value="">Seleccione</option>
+							@foreach($gerentes as $gerente)
+								<option value="{{$gerente->id}}">{{$gerente->name}}</option>
+							@endforeach
+						</select>
+						@error('gerente_id') <div class="invalid-feedback">{{ $message }}</div>@enderror
+					</div>
+				@endrole
+				@role('Administrativo|Gerente')
+					<div class="mb-3">
+						<label for="administrador">Administrador</label>
 						<select class="form-control @error('admin_id') is-invalid @enderror" wire:model="admin_id" aria-label="Administrador">
 							<option value="">Seleccione</option>
+							@if(!is_null($administradores))
 							@foreach($administradores as $administrador)
-								<option value="{{$administrador->id}}">{{$administrador->name}}</option>
+							<?php $array = (array)$administrador; ?>
+								<option value="{{(int) $array['id']}}">{{$array['name']}}</option>
 							@endforeach
+							@endif
 						</select>
 						@error('admin_id') <div class="invalid-feedback">{{ $message }}</div>@enderror
 					</div>

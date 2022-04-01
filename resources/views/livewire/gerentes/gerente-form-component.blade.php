@@ -5,9 +5,9 @@
 			<div class="modal-header">
 				<h5 class="modal-title" id="exampleModalLabel">
 					@if($edit)
-						Editar administrador
+						Editar gerente
 					@else
-						Agregar administrador
+						Agregar gerente
 					@endif
 				</h5>
 				<button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
@@ -15,30 +15,6 @@
 				</button>
 			</div>
 			<div class="modal-body">
-				@role('Administrativo')
-				<div class="mb-3">
-					<label for="name">Gerente</label>
-					<select class="form-control @error('gerente_id') is-invalid @enderror" wire:model="gerente_id" aria-label="Gerente">
-						<option value="">Seleccione</option>
-						@foreach($gerentes as $gerente)
-							<option value="{{$gerente->id}}">{{$gerente->name}}</option>
-						@endforeach
-					</select>
-					@error('gerente_id') <div class="invalid-feedback">{{ $message }}</div>@enderror
-				</div>
-				@endrole
-
-                <div class="mb-3">
-					<label for="name">Campo</label>
-					<select class="form-control @error('field_id') is-invalid @enderror" wire:model="field_id" aria-label="Campo">
-						<option value="">Seleccione</option>
-						@foreach($fields as $field)
-							<option value="{{$field->id}}">{{$field->name}}</option>
-						@endforeach
-					</select>
-					@error('field_id') <div class="invalid-feedback">{{ $message }}</div>@enderror
-				</div>
-
 				<div class="mb-3">
 					<label for="name">Nombre</label>
 					<input type="text" class="form-control @error('name') is-invalid @enderror" id="name" wire:model="name" placeholder="Ingresa el nombre">
