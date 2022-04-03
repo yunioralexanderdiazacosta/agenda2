@@ -2,6 +2,9 @@
 
 namespace App\Http\Livewire;
 
+use App\Models\AdminUser;
+use App\Models\Homework;
+use App\Models\JefeHuertoProfile;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -117,8 +120,31 @@ class GerentesComponent extends Component
 
     public function confirmed()
     {
+        //eliminar tareas gerente
+        Homework::where('user_id', $this->user_id)->delete();
         $admin = Auth::user();
+        //eliminar relacion con administrativo
         $admin->users()->detach($this->user_id);
+        $gerente_users = AdminUser::where('admin_id', $this->user_id)->get();
+        foreach($gerente_users as $value){
+            //eliminar tareas administrador
+            Homework::where('user_id', $value->user_id)->delete();
+            $admin_users = JefeHuertoProfile::where('admin_id', $value->user_id)->get();
+            foreach($admin_users as $value2){
+                //eliminar tareas JH
+                Homework::where('user_id', $value2->user_id)->delete();
+                //eliminar perfil JH
+                JefeHuertoProfile::where('user_id', $value2->user_id)->delete();
+                //eliminar usuario JH
+                User::where('id', $value2->user_id)->delete();
+            }
+            //eliminar usuario administrador
+            AdminUser::where('user_id', $value->user_id)->delete();
+            User::where('id', $value->user_id)->delete();
+        }
+        //eliminar relacion gerente-administrador
+        $gerente_users = AdminUser::where('admin_id', $this->user_id)->delete();
+        //eliminar gerente
         $user = User::find($this->user_id);
         $user->delete();
         $this->alert('success', 'Eliminado correctamente');

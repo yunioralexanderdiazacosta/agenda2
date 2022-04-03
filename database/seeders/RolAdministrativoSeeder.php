@@ -16,7 +16,7 @@ class RolAdministrativoSeeder extends Seeder
      */
     public function run()
     {
-        Role::create(['name' => 'Administrativo']);
+        //Role::create(['name' => 'Administrativo']);
         $user = User::factory()->create([
             'name'          => 'Administrativo',
             'email'         => 'administrativo@example.com',

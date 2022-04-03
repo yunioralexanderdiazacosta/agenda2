@@ -2,7 +2,10 @@
 
 namespace App\Http\Livewire;
 
+use App\Models\AdminUser;
 use App\Models\Field;
+use App\Models\Homework;
+use App\Models\JefeHuertoProfile;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -153,15 +156,6 @@ class AdministradoresComponent extends Component
 
     public function delete($id)
     {
-        $admin = Auth::user();
-        if($admin->hasRole('Administrativo')){
-            $admin_id = $this->gerente_id;
-        }else{
-            $admin_id = $admin->id;
-        }
-        $gerente = User::find($admin_id);
-        $gerente->users()->attach($this->user_id);
-
         $this->user_id = $id;
         $this->alert('question', '¿Esta seguro que desea remover el registro?', [
             'position' => 'center',
@@ -179,6 +173,20 @@ class AdministradoresComponent extends Component
 
     public function confirmed()
     {
+        //Eliminar tareas administrador
+        Homework::where('user_id', $this->user_id)->delete();
+        //Eliminar relacion con gerentes
+        AdminUser::where('user_id', $this->user_id)->delete();
+        $admin_users = JefeHuertoProfile::where('admin_id', $this->user_id)->get();
+        foreach($admin_users as $value){
+            //Eliminar tareas JH
+            Homework::where('user_id', $value->user_id)->delete();
+            //Eliminar profile JH
+            JefeHuertoProfile::where('user_id', $value->user_id)->delete();
+            //Eliminar usuario JH
+            User::where('id', $value->user_id)->delete();
+        }
+        //Eliminar usuario administrador
         $user = User::find($this->user_id);
         $user->delete();
         $this->alert('success', 'Eliminado correctamente');
