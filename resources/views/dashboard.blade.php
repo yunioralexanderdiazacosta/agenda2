@@ -123,24 +123,22 @@
                                 $('#edit_administrativo_id').val(response.homework.user_id);
                                 if("{{ auth()->user()->hasRole('Administrativo') }}"){
                                     hideElements();
-                                }
+                                }response.homework.user_id
                             }else if(response.homework.for_admin == 2){
-                                $('#edit-form-administrativo').show();
+                                $('#edit-form-administrativo').hide();
                                 $('#edit-form-administrador').show();
                                 $('#edit-form-jefe').hide();
                                 $('#edit_admin').prop('checked', true);
-                                $('#edit_administrativo_id').val(response.administrativo_id);
-                                getAdmins(response.administrativo_id, '#edit_admin_id', response.homework.user_id);
                                 if("{{ auth()->user()->hasRole('Admin') }}"){
                                     hideElements();
                                 }
+                                $('#edit_admin_id').val(response.homework.user_id);
                             }else{
-                                $('#edit-form-administrativo').show();
+                                $('#edit-form-administrativo').hide();
                                 $('#edit-form-administrador').show();
                                 $('#edit-form-jefe').show();
                                 $('#edit_jh').prop('checked', true);
-                                $('#edit_administrativo_id').val(response.administrativo_id);
-                                getAdmins(response.administrativo_id, '#edit_admin_id', response.admin_id)
+                                $('#edit_admin_id').val(response.admin_id);
                                 getJefes(response.admin_id, '#edit_user_id', response.homework.user_id)
                                 if("{{ auth()->user()->hasRole('JH') }}"){
                                     $("#actualizar2").show()
@@ -208,7 +206,7 @@
                 error_message('Ingresa la descripción')
             }else if(!for_admin && "{{ auth()->user()->hasRole('Administrativo|Gerente') }}"){
                 error_message('Selecciona para quien desea crear la tarea')
-            }else if(administrativo_id == '' && (for_admin == 1 || for_admin == 2 || for_admin == 3 ) && "{{ auth()->user()->hasRole('Gerente') }}"){
+            }else if(administrativo_id == '' && (for_admin == 1) && "{{ auth()->user()->hasRole('Gerente') }}"){
                 error_message('Seleccione el administrativo')
             }else if(admin_id == '' && (for_admin == 2 || for_admin == 3) && "{{ auth()->user()->hasRole('Administrativo|Gerente') }}"){
                 error_message('Seleccione el administrador')
@@ -268,7 +266,7 @@
                 error_message('Ingresa la descripción')
             }else if(!for_admin && "{{ auth()->user()->hasRole('Administrativo|Gerente') }}"){
                 error_message('Selecciona para quien desea crear la tarea')
-            }else if(administrativo_id == '' && (for_admin == 1 || for_admin == 2 || for_admin == 3 ) && "{{ auth()->user()->hasRole('Gerente') }}"){
+            }else if(administrativo_id == '' && (for_admin == 1) && "{{ auth()->user()->hasRole('Gerente') }}"){
                 error_message('Seleccione el administrativo')
             }else if(admin_id == '' && (for_admin == 2 || for_admin == 3) && "{{ auth()->user()->hasRole('Administrativo|Gerente') }}"){
                 error_message('Seleccione el administrador')
@@ -390,28 +388,6 @@
             })
         }
 
-        function getAdmins(administrativo_id, atrib = '#admin_id', user_id = null)
-        {
-            if(administrativo_id != '')
-            {
-                var url = "{{route('admins.administrativo', ":id")}}";
-                url = url.replace(":id", administrativo_id);
-                $.ajax({
-                    url: url,
-                    dataType: "json",
-                    success: function(response){
-                        $(atrib).empty();
-                        $(atrib).append("<option value=''>Seleccione</option>");
-
-                        $.each(response, function (index, value) {
-                            var selected = value.id == user_id ? 'selected' : '';
-                            $(atrib).append(`<option value="${value.id}" ${selected}>${value.name}</option>`);
-                        })
-                    }
-                });
-            }
-        }
-
         function getJefes(admin_id, atrib = '#user_id', user_id = null)
         {
             if(admin_id != ''){
@@ -451,8 +427,7 @@
             $('#user_id').append("<option value=''>Seleccione</option>");
             $('#form-jefe').hide();
             if("{{auth()->user()->hasRole('Gerente')}}"){
-                $('#form-administrativo').show();
-                $('#administrativo_id').val('');
+                $('#form-administrativo').hide();
             }
             $('#form-administrador').show();
             $('#admin_id').val('');
@@ -461,7 +436,7 @@
         function selectJefe()
         {
             if("{{auth()->user()->hasRole('Gerente')}}"){
-                $('#form-administrativo').show();
+                $('#form-administrativo').hide();
             }
             $('#form-jefe').show();
             $('#form-administrador').show();

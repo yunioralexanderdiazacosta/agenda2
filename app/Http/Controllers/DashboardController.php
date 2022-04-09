@@ -14,12 +14,21 @@ class DashboardController extends Controller
         $users = JefeHuertoProfile::select('user_id')->with('jefe:id,name')->where('admin_id', Auth::user()->id)->get();
         $priorities = Priority::all();
         if(Auth::user()->hasRole('Gerente')){
-            $administrativos    = DB::table('admin_users')
+            $administrativos = DB::table('admin_users')
             ->select('users.id', 'users.name')
             ->join('users', 'users.id', 'admin_users.user_id')
             ->where('admin_id', Auth::user()->id)
             ->get();
-            $administradores    = [];
+            $administrativos_id = DB::table('admin_users')
+            ->select('users.id')
+            ->join('users', 'users.id', 'admin_users.user_id')
+            ->where('admin_id', Auth::user()->id)
+            ->pluck('id');
+            $administradores = DB::table('admin_users')
+            ->select('users.id', 'users.name')
+            ->join('users', 'users.id', 'admin_users.user_id')
+            ->where('admin_id', $administrativos_id)
+            ->get();
         }elseif(Auth::user()->hasRole('Administrativo')){
             $administrativos    = [];
             $administradores    = DB::table('admin_users')
