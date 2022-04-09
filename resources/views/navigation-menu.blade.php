@@ -16,9 +16,9 @@
             <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Tareas">
                 <a class="nav-link" href="{{ url('/dashboard') }}">Tareas</a>
             </li>
-            @role('Administrativo')
-            <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Gerentes">
-                <a class="nav-link" href="{{ route('gerentes') }}">Gerentes</a>
+            @role('Gerente')
+            <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Administrativos">
+                <a class="nav-link" href="{{ route('administrativos') }}">Administrativos</a>
             </li>
             @endrole
             @role('Administrativo|Gerente')

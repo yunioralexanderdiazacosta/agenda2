@@ -19,7 +19,7 @@ class AdministradoresComponent extends Component
     use WithPagination;
     use LivewireAlert;
     protected $paginationTheme = 'bootstrap';
-    public $name, $email, $password = '', $password_confirmation, $field_id, $gerente_id;
+    public $name, $email, $password = '', $password_confirmation, $field_id, $administrativo_id;
     public $edit = false;
 
     protected $listeners = [
@@ -31,39 +31,40 @@ class AdministradoresComponent extends Component
         'email' => 'Correo Electrónico',
         'password' => 'Contraseña',
         'field_id' => 'Campo',
-        'gerente_id' => 'Gerente'
+        'Administrativo_id' => 'Administrativo'
     ];
 
     public function render()
     {
-        if(Auth::user()->hasRole('Administrativo')){
-            $gerentes = DB::table('admin_users')
+        if(Auth::user()->hasRole('Gerente')){
+
+            $administrativos = DB::table('admin_users')
             ->select('users.id', 'users.name', 'users.email')
             ->join('users', 'users.id', 'admin_users.user_id')
-            ->where('admin_id', Auth::user()->id)->paginate(5);
+            ->where('admin_id', Auth::user()->id)->get();
 
-            $gerentes_id = DB::table('admin_users')
-            ->select('users.id')
+            $administrativos_id = DB::table('admin_users')
+            ->select('users.id', 'users.name', 'users.email')
             ->join('users', 'users.id', 'admin_users.user_id')
             ->where('admin_id', Auth::user()->id)->get()->pluck('id');
 
             $administradores = DB::table('admin_users')
-            ->select('a.id', 'a.name', 'a.email', 'fields.name as field_name', 'g.id as gerente_id', 'g.name as gerente')
+            ->select('a.id', 'a.name', 'a.email', 'fields.name as field_name', 'g.id as administrativo_id', 'g.name as administrativo')
             ->join('users as a', 'a.id', 'admin_users.user_id')
             ->join('users as g', 'g.id', 'admin_users.admin_id')
             ->join('fields', 'fields.id', 'a.field_id')
-            ->whereIn('admin_id', $gerentes_id)->paginate(5);
+            ->whereIn('admin_id', $administrativos_id)->paginate(5);
         }else{
-            $gerentes = [];
+            $administrativos = [];
             $administradores = DB::table('admin_users')
-            ->select('a.id', 'a.name', 'a.email', 'fields.name as field_name', 'g.id as gerente_id', 'g.name as gerente')
+            ->select('a.id', 'a.name', 'a.email', 'fields.name as field_name', 'g.id as administrativo_id', 'g.name as administrativo')
             ->join('users as a', 'a.id', 'admin_users.user_id')
             ->join('users as g', 'g.id', 'admin_users.admin_id')
             ->join('fields', 'fields.id', 'a.field_id')
             ->where('admin_id', Auth::user()->id)->paginate(5);
         }
         $fields = Field::all();
-        return view('livewire.administradores-component', compact('administradores', 'gerentes', 'fields'));
+        return view('livewire.administradores-component', compact('administradores', 'administrativos', 'fields'));
     }
 
     private function resetInputFields()
@@ -73,7 +74,7 @@ class AdministradoresComponent extends Component
         $this->password = '';
         $this->password_confirmation = '';
         $this->field_id = '';
-        $this->gerente_id = '';
+        $this->administrativo_id = '';
     }
 
     public function store()
@@ -84,7 +85,7 @@ class AdministradoresComponent extends Component
             'email' => 'required|email|max:255|unique:users',
             'password' => 'required|string|confirmed|min:8',
             'field_id' => 'required',
-            'gerente_id' => 'present'
+            'administrativo_id' => 'present'
         ]);
         $user = new  User();
         $user->name = $this->name;
@@ -94,8 +95,8 @@ class AdministradoresComponent extends Component
         $user->save();
         $user->assignRole('Admin');
 
-        if($admin->hasRole('Administrativo')){
-            $admin_id = $this->gerente_id;
+        if($admin->hasRole('Gerente')){
+            $admin_id = $this->administrativo_id;
         }else{
             $admin_id = $admin->id;
         }
@@ -114,7 +115,7 @@ class AdministradoresComponent extends Component
         $this->emit('show-form');
     }
 
-    public function edit($id, $gerente_id = null)
+    public function edit($id, $administrativo_id = null)
     {
         $user_logged = Auth::user();
         $this->edit = true;
@@ -124,8 +125,8 @@ class AdministradoresComponent extends Component
         $this->email = $admin->email;
         $this->field_id = $admin->field_id;
         $this->user_id = $admin->id;
-        if($user_logged->hasRole('Administrativo')){
-            $this->gerente_id = $gerente_id;
+        if($user_logged->hasRole('Gerente')){
+            $this->administrativo_id = $administrativo_id;
         }
     }
 
@@ -175,7 +176,7 @@ class AdministradoresComponent extends Component
     {
         //Eliminar tareas administrador
         Homework::where('user_id', $this->user_id)->delete();
-        //Eliminar relacion con gerentes
+        //Eliminar relacion con administrativo
         AdminUser::where('user_id', $this->user_id)->delete();
         $admin_users = JefeHuertoProfile::where('admin_id', $this->user_id)->get();
         foreach($admin_users as $value){

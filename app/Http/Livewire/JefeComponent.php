@@ -17,7 +17,7 @@ class JefeComponent extends Component
     use WithPagination;
     use LivewireAlert;
     protected $paginationTheme = 'bootstrap';
-    public $name, $email, $password = '', $password_confirmation, $field_id, $user_id, $admin_id, $gerente_id = null;
+    public $name, $email, $password = '', $password_confirmation, $field_id, $user_id, $admin_id, $administrativo_id = null;
     public $administradores;
     public $edit = false;
 
@@ -32,32 +32,39 @@ class JefeComponent extends Component
         'email' => 'Correo Electrónico',
         'password' => 'Contraseña',
         'admin_id' => 'Administrador',
-        'gerente_id' => 'Gerente'
+        'administrativo_id' => 'Administrativo'
     ];
 
     public function render()
     {
         $user = Auth::user();
-        $gerentes = [];
-        if($user->hasRole('Administrativo')){
-            $gerentes = DB::table('admin_users')
+        $administrativos = [];
+        if($user->hasRole('Gerente')){
+            $administrativos = DB::table('admin_users')
             ->select('users.id', 'users.name')
             ->join('users', 'users.id', 'admin_users.user_id')
             ->where('admin_id', Auth::user()->id)->get();
-            $gerentes_id = $gerentes->pluck('id');
+            $administrativos_id = $administrativos->pluck('id');
             $jefes = DB::table('jefe_huerto_profiles as jh')
-            ->select('u.id', 'u.name', 'u.email', 'a.id as administrador_id', 'a.name as administrador', 'admin.admin_id as gerente_id', 'f.name as campo')
+            ->select('u.id', 'u.name', 'u.email', 'a.id as administrador_id', 'a.name as administrador', 'admin.admin_id as administrativo_id', 'f.name as campo')
             ->join('users as u', 'u.id', 'jh.user_id')
             ->join('users as a', 'a.id', 'jh.admin_id')
             ->join('admin_users as admin', 'admin.user_id', 'jh.admin_id')
             ->join('fields as f', 'f.id', 'u.field_id')
-            ->whereIn('admin.admin_id', $gerentes_id)
+            ->whereIn('admin.admin_id', $administrativos_id)
             ->paginate(5);
         }else if($user->hasRole('Admin')){
-            $jefes = JefeHuertoProfile::with('jefe')->where('admin_id', Auth::user()->id)->paginate(5);
+            $jefes = DB::table('jefe_huerto_profiles as jh')
+            ->select('u.id', 'u.name', 'u.email', 'a.id as administrador_id', 'a.name as administrador', 'admin.admin_id as administrativo_id', 'f.name as campo')
+            ->join('users as u', 'u.id', 'jh.user_id')
+            ->join('users as a', 'a.id', 'jh.admin_id')
+            ->join('admin_users as admin', 'admin.user_id', 'jh.admin_id')
+            ->join('fields as f', 'f.id', 'u.field_id')
+            ->where('jh.admin_id', Auth::user()->id)
+            ->paginate(5);
         }else{
             $jefes =  DB::table('jefe_huerto_profiles as jh')
-            ->select('u.id', 'u.name', 'u.email', 'a.id as administrador_id', 'a.name as administrador', 'admin.admin_id as gerente_id', 'f.name as campo')
+            ->select('u.id', 'u.name', 'u.email', 'a.id as administrador_id', 'a.name as administrador', 'admin.admin_id as administrativo_id', 'f.name as campo')
             ->join('users as u', 'u.id', 'jh.user_id')
             ->join('users as a', 'a.id', 'jh.admin_id')
             ->join('admin_users as admin', 'admin.user_id', 'jh.admin_id')
@@ -70,7 +77,7 @@ class JefeComponent extends Component
             ->where('admin_id', Auth::user()->id)->get();
         }
         $fields = Field::all();
-        return view('livewire.jefe-component', compact('jefes', 'fields', 'gerentes'));
+        return view('livewire.jefe-component', compact('jefes', 'fields', 'administrativos'));
     }
 
     private function resetInputFields()
@@ -82,7 +89,7 @@ class JefeComponent extends Component
         $this->password_confirmation = '';
         $this->user_id = '';
         $this->admin_id = '';
-        $this->gerente_id = '';
+        $this->administrativo_id = '';
     }
 
     public function store()
@@ -93,7 +100,7 @@ class JefeComponent extends Component
             'email' => 'required|email|max:255|unique:users',
             'password' => 'required|string|confirmed|min:8',
             'admin_id' => 'sometimes',
-            'gerente_id' => 'sometimes'
+            'administrativo_id' => 'sometimes'
         ]);
         $user = new User();
         $user->name = $this->name;
@@ -120,7 +127,7 @@ class JefeComponent extends Component
         $this->emit('show-form');
     }
 
-    public function edit($id, $gerente_id = null, $administrador_id = null)
+    public function edit($id, $administrativo_id = null, $administrador_id = null)
     {
         $user = User::find($id);
         $this->edit = true;
@@ -133,8 +140,8 @@ class JefeComponent extends Component
         $this->administradores  =  collect(DB::table('admin_users')
         ->select('users.id', 'users.name')
         ->join('users', 'users.id', 'admin_users.user_id')
-        ->where('admin_id', $gerente_id)->get()->toArray());
-        $this->gerente_id       = $gerente_id;
+        ->where('admin_id', $administrativo_id)->get()->toArray());
+        $this->administrativo_id       = $administrativo_id;
         if(Auth::user()->hasRole('Administrativo|Gerente')){
             $this->admin_id = $administrador_id;
         }
@@ -148,7 +155,7 @@ class JefeComponent extends Component
             'email' => 'required|email|max:255|unique:users,email,' . $this->user_id,
             'password' => 'sometimes|string|confirmed|min:8',
             'admin_id' => 'sometimes',
-            'gerente_id' => 'sometimes'
+            'administrativo_id' => 'sometimes'
         ]);
 
         $user = User::find($this->user_id);
@@ -197,12 +204,12 @@ class JefeComponent extends Component
         $this->alert('success', 'Eliminado correctamente');
     }
 
-    function updatedgerenteId($gerente_id)
+    function updatedAdministrativoId($administrativo_id)
     {
         $this->admin_id = '';
         $this->administradores =  collect(DB::table('admin_users')
         ->select('users.id', 'users.name')
         ->join('users', 'users.id', 'admin_users.user_id')
-        ->where('admin_id', $gerente_id)->get()->toArray());
+        ->where('admin_id', $administrativo_id)->get()->toArray());
     }
 }

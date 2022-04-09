@@ -5,9 +5,9 @@
 			<div class="modal-header">
 				<h5 class="modal-title" id="exampleModalLabel">
 					@if($edit)
-						Editar gerente
+						Editar administrativo
 					@else
-						Agregar gerente
+						Agregar administrativo
 					@endif
 				</h5>
 				<button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">

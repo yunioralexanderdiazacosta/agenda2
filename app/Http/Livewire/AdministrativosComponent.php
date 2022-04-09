@@ -13,7 +13,7 @@ use Jantinnerezo\LivewireAlert\LivewireAlert;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-class GerentesComponent extends Component
+class AdministrativosComponent extends Component
 {
     use WithPagination;
     use LivewireAlert;
@@ -34,11 +34,11 @@ class GerentesComponent extends Component
 
     public function render()
     {
-        $gerentes = DB::table('admin_users')
+        $administrativos = DB::table('admin_users')
             ->select('users.id', 'users.name', 'users.email')
             ->join('users', 'users.id', 'admin_users.user_id')
             ->where('admin_id', Auth::user()->id)->paginate(5);
-        return view('livewire.gerentes-component', compact('gerentes'));
+        return view('livewire.administrativos-component', compact('administrativos'));
     }
 
     public function store()
@@ -54,7 +54,7 @@ class GerentesComponent extends Component
         $user->email = $this->email;
         $user->password = Hash::make($this->password);
         $user->save();
-        $user->assignRole('Gerente');
+        $user->assignRole('Administrativo');
         $admin->users()->attach($user->id);
 
         $this->alert('success', 'Registrado correctamente');

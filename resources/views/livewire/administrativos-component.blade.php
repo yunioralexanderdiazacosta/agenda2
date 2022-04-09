@@ -1,9 +1,9 @@
 <div>
-    @include('livewire.gerentes.gerente-form-component')
+    @include('livewire.administrativos.administrativo-form-component')
     <button type="button" class="btn btn-primary mb-3 btn-lg" wire:click="add">
         Agregar
     </button>
-    @if(count($gerentes) > 0)
+    @if(count($administrativos) > 0)
     <div class="table-responsive">
         <table class="table table-striped">
             <thead>
@@ -15,7 +15,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($gerentes as $value)
+                @foreach ($administrativos as $value)
                     <tr class="align-middle">
                         <td>{{ $loop->index+1 }}</td>
                         <td>{{ $value->name }}</td>
@@ -30,7 +30,7 @@
                 @endforeach
             </tbody>
         </table>
-        {{ $gerentes->links() }}
+        {{ $administrativos->links() }}
     </div>
     @else
     <div class="alert alert-primary" role="alert">

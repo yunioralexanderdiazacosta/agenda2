@@ -28,10 +28,10 @@
 				@role('Administrativo|Gerente')
 				<div class="mb-3">
 					<label>Para</label><br>
-					@role('Administrativo')
+					@role('Gerente')
 					<div class="form-check form-check-inline">
-						<input class="form-check-input" type="radio" name="para" id="gerente" value=1 onclick="selectGerente()">
-						<label class="form-check-label" for="inlineRadio1">Gerente</label>
+						<input class="form-check-input" type="radio" name="para" id="administrativo" value=1 onclick="selectAdministrativo()">
+						<label class="form-check-label" for="inlineRadio1">Administrativo</label>
 					</div>
 					@endrole
 					<div class="form-check form-check-inline">
@@ -45,13 +45,13 @@
 				</div>
 				@endrole
 
-				@role('Administrativo')
-				<div class="mb-3" id="form-gerente" style="display: none">
-					<label for="gerente">Gerente</label>
-					<select class="form-control" aria-label="gerente" id="gerente_id" onclick="getAdmins(this.value)">
+				@role('Gerente')
+				<div class="mb-3" id="form-administrativo" style="display: none">
+					<label for="administrativo">Administrativo</label>
+					<select class="form-control" aria-label="administrativo" id="administrativo_id" onclick="getAdmins(this.value)">
 						<option value="">Seleccione</option>
-						@foreach($gerentes as $gerente)
-							<option value="{{$gerente->id}}">{{$gerente->name}}</option>
+						@foreach($administrativos as $administrativo)
+							<option value="{{$administrativo->id}}">{{$administrativo->name}}</option>
 						@endforeach
 					</select>
 				</div>

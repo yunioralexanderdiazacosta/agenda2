@@ -15,16 +15,16 @@
 				</button>
 			</div>
 			<div class="modal-body">
-				@role('Administrativo')
+				@role('Gerente')
 					<div class="mb-3">
-						<label for="gerente">Gerente</label>
-						<select class="form-control @error('gerente_id') is-invalid @enderror" wire:model="gerente_id" aria-label="Gerente">
+						<label for="gerente">Administrativo</label>
+						<select class="form-control @error('administrativo_id') is-invalid @enderror" wire:model="administrativo_id" aria-label="Administrativo">
 							<option value="">Seleccione</option>
-							@foreach($gerentes as $gerente)
-								<option value="{{$gerente->id}}">{{$gerente->name}}</option>
+							@foreach($administrativos as $administrativo)
+								<option value="{{$administrativo->id}}">{{$administrativo->name}}</option>
 							@endforeach
 						</select>
-						@error('gerente_id') <div class="invalid-feedback">{{ $message }}</div>@enderror
+						@error('administrativo_id') <div class="invalid-feedback">{{ $message }}</div>@enderror
 					</div>
 				@endrole
 				@role('Administrativo|Gerente')

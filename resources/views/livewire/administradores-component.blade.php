@@ -12,7 +12,7 @@
                 <th scope="col">Nombre</th>
                 <th scope="col">Correo Electronico</th>
                 <th scope="col">Campo</th>
-                @role('Administrativo')<th scope="col">Gerente</th>@endrole
+                @role('Gerente')<th scope="col">Administrativo</th>@endrole
                 <th scope="col"></th>
                 </tr>
             </thead>
@@ -23,12 +23,12 @@
                         <td>{{ $value->name }}</td>
                         <td>{{ $value->email }}</td>
                         <td>{{ $value->field_name }}</td>
-                        @role('Administrativo')
-                        <td>{{ $value->gerente }}</td>
+                        @role('Gerente')
+                        <td>{{ $value->administrativo }}</td>
                         @endrole
                         <td>
                             <div class="btn-group">
-                                <button type="button" wire:click="edit({{ $value->id}}, {{$value->gerente_id}})" class="btn btn-outline-primary">Editar</button>
+                                <button type="button" wire:click="edit({{ $value->id}}, {{$value->administrativo_id}})" class="btn btn-outline-primary">Editar</button>
                                 <button type="button" wire:click="delete({{ $value->id }})"class="btn btn-outline-primary">Borrar</button>
                             </div>
                         </td>

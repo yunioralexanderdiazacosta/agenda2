@@ -15,7 +15,7 @@ class HomeworksController extends Controller
         $user = Auth::user();
         $start = date('Y-m-d', strtotime($request->start));
         $end = date('Y-m-d', strtotime($request->end));
-        if($user->hasrole('Administrativo')){
+        if($user->hasrole('Gerente')){
             $ids = $this->get_users();
             $homeworks = DB::table('homework as h')
             ->select('h.id', 'h.title', 'h.date', 'p.color', 'h.for_admin', 'h.status')
@@ -43,7 +43,7 @@ class HomeworksController extends Controller
                 }
                 return $data;
             });
-        }else if($user->hasrole('Gerente')){
+        }else if($user->hasrole('Administrativo')){
 
             $ids = $this->get_users(false);
             $homeworks = DB::table('homework as h')
@@ -111,7 +111,7 @@ class HomeworksController extends Controller
             });
         }else if($user->hasrole('JH')){
             $homeworks = DB::table('users')
-            ->select('homework.id', 'homework.title', 'homework.date', 'priorities.color', 'homework.status')
+            ->select('homework.id', 'homework.title', 'homework.date', 'priorities.color', 'homework.status', 'homework.for_admin')
             ->join('jefe_huerto_profiles', 'users.id', '=', 'jefe_huerto_profiles.user_id')
             ->join('homework', 'users.id', 'homework.user_id')
             ->join('priorities', 'homework.priority_id', 'priorities.id')
@@ -141,12 +141,12 @@ class HomeworksController extends Controller
     private function get_users($is_administrativo = true)
     {
         if($is_administrativo == true){
-            $gerentes_id = DB::table('admin_users')
+            $administrativos_id = DB::table('admin_users')
             ->select('users.id')
             ->join('users', 'users.id', 'admin_users.user_id')
             ->where('admin_id', Auth::user()->id)->get()->pluck('id')->toArray();
         }else{
-            $gerentes_id = [Auth::user()->id];
+            $administrativos_id = [Auth::user()->id];
         }
 
         $administradores_id = DB::table('admin_users')
@@ -154,15 +154,15 @@ class HomeworksController extends Controller
         ->join('users as a', 'a.id', 'admin_users.user_id')
         ->join('users as g', 'g.id', 'admin_users.admin_id')
         ->join('fields', 'fields.id', 'a.field_id')
-        ->whereIn('admin_id', $gerentes_id)->get()->pluck('id')->toArray();
+        ->whereIn('admin_id', $administrativos_id)->get()->pluck('id')->toArray();
 
         $jefes_id =  DB::table('jefe_huerto_profiles as jh')
         ->select('u.id')
         ->join('users as u', 'u.id', 'jh.user_id')
         ->join('admin_users as admin', 'admin.user_id', 'jh.admin_id')
-        ->whereIn('admin.admin_id', $gerentes_id)
+        ->whereIn('admin.admin_id', $administrativos_id)
         ->get()->pluck('id')->toArray();
-        $ids = array_merge($gerentes_id, $administradores_id, $jefes_id);
+        $ids = array_merge($administrativos_id, $administradores_id, $jefes_id);
         return $ids;
     }
 }

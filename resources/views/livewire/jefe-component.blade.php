@@ -26,7 +26,7 @@
                         <td>{{ $value->campo }}</td>
                         <td>
                             <div class="btn-group">
-                                <button type="button" wire:click="edit({{ $value->id }}, {{$value->gerente_id}}, {{$value->administrador_id}})" class="btn btn-outline-primary">Editar</button>
+                                <button type="button" wire:click="edit({{ $value->id }}, {{$value->administrativo_id}}, {{$value->administrador_id}})" class="btn btn-outline-primary">Editar</button>
                                 <button type="button" wire:click="delete({{ $value->id }})"class="btn btn-outline-primary">Borrar</button>
                             </div>
                         </td>

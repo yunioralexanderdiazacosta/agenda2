@@ -1,9 +1,9 @@
 <?php
 
 use App\Http\Controllers\AdministradoresController;
-use App\Http\Controllers\admins\AdminsGerenteController;
+use App\Http\Controllers\admins\AdminsAdministrativoController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\GerentesController;
+use App\Http\Controllers\AdministrativosController;
 use App\Http\Controllers\Homeworks\CreateHomeworkController;
 use App\Http\Controllers\Homeworks\DeleteHomeworkController;
 use App\Http\Controllers\Homeworks\EditHomeworkController;
@@ -33,10 +33,10 @@ Route::get('/', function () {
 Route::middleware(['auth:sanctum', 'verified'])->group(function(){
 
     Route::get('/dashboard', DashboardController::class)->name('dashboard');
-    Route::get('/gerentes', GerentesController::class)->name('gerentes');
+    Route::get('/administrativos', AdministrativosController::class)->name('administrativos');
     Route::get('/administradores', AdministradoresController::class)->name('administradores');
     Route::get('/jefes/{id}/admin', JefesAdministradorController::class)->name('jefes.admin');
-    Route::get('/admins/{id}/gerente', AdminsGerenteController::class)->name('admins.gerente');
+    Route::get('/admins/{id}/administrativo', AdminsAdministrativoController::class)->name('admins.administrativo');
     Route::get('/jefes', JefesHuertoController::class)->name('jefes');
 
     Route::get('/homeworks', HomeworksController::class)->name('homeworks');
