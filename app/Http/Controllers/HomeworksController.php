@@ -25,18 +25,11 @@ class HomeworksController extends Controller
             ->whereDate('h.date',   '<=', $end)
             ->get()
             ->transform(function($homework){
-                if($homework->for_admin == '1'){
-                    $col = "#455a64";
-                }else if($homework->for_admin == '2'){
-                    $col = "#1565cz0";
-                }else{
-                    $col = $homework->color;
-                }
                 $data = [
                     'id'    => $homework->id,
                     'title' => $homework->title,
                     'start' => $homework->date,
-                    'color' => $col
+                    'color' => $homework->color
                 ];
                 if($homework->status == 1){
                     $data['icon'] = "check";
@@ -54,18 +47,11 @@ class HomeworksController extends Controller
             ->whereDate('h.date',   '<=', $end)
             ->get()
             ->transform(function($homework){
-                if($homework->for_admin == '1'){
-                    $col = "#455a64";
-                }else if($homework->for_admin == '2'){
-                    $col = "#1565cz0";
-                }else{
-                    $col = $homework->color;
-                }
                 $data = [
                     'id' => $homework->id,
                     'title' => $homework->title,
                     'start' => $homework->date,
-                    'color' => $col
+                    'color' => $homework->color
                 ];
                 if($homework->for_admin == 1){
                     $data['startEditable'] = false;
@@ -88,18 +74,11 @@ class HomeworksController extends Controller
             ->whereDate('homework.date',   '<=', $end)
             ->get()
             ->transform(function($homework){
-                if($homework->for_admin == '1'){
-                    $col = "#455a64";
-                }else if($homework->for_admin == '2'){
-                    $col = "#1565cz0";
-                }else{
-                    $col = $homework->color;
-                }
                 $data = [
                     'id' => $homework->id,
                     'title' => $homework->title,
                     'start' => $homework->date,
-                    'color' => $col
+                    'color' => $homework->color
                 ];
                 if($homework->for_admin == 2){
                     $data['startEditable'] = false;
