@@ -27,7 +27,7 @@ class DashboardController extends Controller
             $administradores = DB::table('admin_users')
             ->select('users.id', 'users.name')
             ->join('users', 'users.id', 'admin_users.user_id')
-            ->where('admin_id', $administrativos_id)
+            ->whereIn('admin_id', $administrativos_id)
             ->get();
         }elseif(Auth::user()->hasRole('Administrativo')){
             $administrativos    = [];
