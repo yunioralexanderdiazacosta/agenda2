@@ -44,6 +44,18 @@
         window.livewire.on('hide-form', () => {
             $('#show-form').modal('hide');
         });
+        window.livewire.on('show-p-create', () => {
+            $('#p-create').modal('show');
+        });
+        window.livewire.on('hide-p-create', () => {
+            $('#p-create').modal('hide');
+        });
+        window.livewire.on('show-p-view', () => {
+            $('#p-view').modal('show');
+        });
+        window.livewire.on('hide-p-create', () => {
+            $('#p-view').modal('hide');
+        });
     </script>
     <x-livewire-alert::scripts />
     <script src="{{ asset('js/jquery.min.js') }}"></script>

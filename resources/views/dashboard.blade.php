@@ -103,46 +103,47 @@
                             $('#edit_title').val(response.homework.title);
                             $('#edit_description').val(response.homework.description);
                             $('#edit_comment').val(response.homework.comment);
-                            if(!"{{ auth()->user()->hasRole('JH') }}"){
-                                $("#selected_option").show();
-                                $("#actualizar").show();
+                            $('#for_admin').val(response.homework.for_admin);
+                            if(response.homework.user_id == '{{ auth()->user()->id }}' && response.homework.is_own == 0){
                                 $("#eliminar").show();
-                                $("#actualizar2").hide();
+                                $("#title_modal").text('Ver tarea');
+                                $("#edit_date").prop('readonly', true);
+                                $("#edit_title").prop('readonly', true);
+                                $("#edit_description").prop('readonly', true);
+                                $("#edit_priority_id").css("pointer-events", "auto");
+                                $("#selected_option").css("display", "none");
+                                $("#view").val(1);
+                            }else{
                                 $("#eliminar").show();
                                 $("#title_modal").text('Editar tarea');
                                 $("#edit_date").prop('readonly', false);
                                 $("#edit_title").prop('readonly', false);
                                 $("#edit_description").prop('readonly', false);
-                                $("#edit_priority_id").css("pointer-events", "auto");
+                                $("#edit_priority_id").css("pointer-events", "none");
+                                $("#selected_option").css("display", "block");
+                                $("#view").val(0);
                             }
-                            if(response.homework.for_admin == 1){
-                                $('#edit_administrativo').prop('checked', true);
-                                $('#edit-form-administrativo').show();
-                                $('#edit-form-administrador').hide();
-                                $('#edit-form-jefe').hide();
-                                $('#edit_administrativo_id').val(response.homework.user_id);
-                                if("{{ auth()->user()->hasRole('Administrativo') }}"){
-                                    hideElements();
-                                }response.homework.user_id
-                            }else if(response.homework.for_admin == 2){
-                                $('#edit-form-administrativo').hide();
-                                $('#edit-form-administrador').show();
-                                $('#edit-form-jefe').hide();
-                                $('#edit_admin').prop('checked', true);
-                                if("{{ auth()->user()->hasRole('Admin') }}"){
-                                    hideElements();
-                                }
-                                $('#edit_admin_id').val(response.homework.user_id);
-                            }else{
-                                $('#edit-form-administrativo').hide();
-                                $('#edit-form-administrador').show();
-                                $('#edit-form-jefe').show();
-                                $('#edit_jh').prop('checked', true);
-                                $('#edit_admin_id').val(response.admin_id);
-                                getJefes(response.admin_id, '#edit_user_id', response.homework.user_id)
-                                if("{{ auth()->user()->hasRole('JH') }}"){
-                                    $("#actualizar2").show()
-                                }
+                            switch(response.homework.for_admin){
+                                case 0:
+                                    $('#edit_mi').prop('checked', true);
+                                    editSelectI();
+                                    break;
+                                case 1:
+                                    $('#edit_gerente').prop('checked', true);
+                                    editSelectGerente(response.homework.user_id);
+                                    break;
+                                case 2:
+                                    $('#edit_admin').prop('checked', true);
+                                    editSelectAdmin(response.homework.user_id);
+                                    break;
+                                case 3:
+                                    $('#edit_jh').prop('checked', true);
+                                    editSelectJefe(response.homework.user_id);
+                                    break;
+                                case 4:
+                                    $('#edit_administrativo').prop('checked', true);
+                                    editSelectAdministrativo(response.homework.user_id);
+                                    break;
                             }
                             if(response.homework.status == 1){
                                 var status = true;
@@ -159,7 +160,7 @@
                     var i = document.createElement('i');
                     if(e.event.extendedProps.icon){
                         i.className = 'fas fa-check-circle fa-lg float-right text-white mr-2 mt-1';
-                        $("#actualizar").show();   e.el.prepend(i);
+                        e.el.prepend(i);
                     }
                 },
 
@@ -185,18 +186,12 @@
             var date = $('#date').val();
             var title = $('#title').val();
             var description = $('#description').val();
-            var user_id = $('#user_id').val();
             var priority_id = $('#priority_id').val();
             var for_admin = $('input[name=para]:checked').val();
+            var gerente_id = $('#gerente_id').val();
             var admin_id = $('#admin_id').val();
             var administrativo_id = $('#administrativo_id').val();
-
-            if($('input[name=para]').length <= 0){
-                for_admin = 3;
-            }
-            if($('#administrativo_id').length <= 0){
-                administrativo_id = '';
-            }
+            var user_id = $('#user_id').val();
 
             if(date == ''){
                 error_message('Ingrese/seleccione la fecha')
@@ -204,21 +199,27 @@
                 error_message('Ingrese el titulo')
             }else if(description == ''){
                 error_message('Ingresa la descripción')
-            }else if(!for_admin && "{{ auth()->user()->hasRole('Administrativo|Gerente') }}"){
+            }else if(!for_admin){
                 error_message('Selecciona para quien desea crear la tarea')
-            }else if(administrativo_id == '' && (for_admin == 1) && "{{ auth()->user()->hasRole('Gerente') }}"){
-                error_message('Seleccione el administrativo')
-            }else if(admin_id == '' && (for_admin == 2 || for_admin == 3) && "{{ auth()->user()->hasRole('Administrativo|Gerente') }}"){
+            }else if(gerente_id == '' && for_admin == 1){
+                error_message('Seleccione el gerente')
+            }else if(admin_id == '' && for_admin == 2){
                 error_message('Seleccione el administrador')
-            }else if(for_admin == 3 && user_id == ''){
+            }else if(user_id == '' && for_admin == 3){
                 error_message('Seleccione el jefe de huerto')
+            }else if(administrativo_id == '' && for_admin == 4){
+                error_message('Seleccione el administrativo')
             }else if(priority_id == ''){
                 error_message('Seleccione la prioridad')
             }else{
                 if(for_admin == 1){
-                    user_id = administrativo_id;
+                    user_id = gerente_id;
                 }else if(for_admin == 2){
                     user_id = admin_id;
+                }else if(for_admin == 4){
+                    user_id = administrativo_id;
+                }else if(for_admin == 0){
+                    user_id = '';
                 }
                 $.ajax({
                     url: "{{route('homework.create')}}",
@@ -241,21 +242,30 @@
             var title       = $('#edit_title').val();
             var description = $('#edit_description').val();
             var for_admin   = $('input[name=edit_para]:checked').val();
+            var gerente_id = $('#edit_gerente_id').val();
             var admin_id    = $('#edit_admin_id').val();
             var user_id     = $('#edit_user_id').val();
-            var administrativo_id  = $('#edit_administrativo_id').val();
+            var administrativo_id   = $('#edit_administrativo_id').val();
             var priority_id = $('#edit_priority_id').val();
             var id          = $('#id').val();
             var url         = "{{route('homework.update', ":id")}}";
             url             = url.replace(":id", id);
-            if($('input[name=edit_para]').length <= 0){
-                for_admin = 3;
-            }
-            var comment    = $('#edit_comment').val();
+            var comment     = $('#edit_comment').val();
             if($('#status').prop('checked')) {
                 var status = 1;
             }else{
-                var status = 0
+                var status = 0;
+            }
+            if($('#view').val() == 1){
+                if(for_admin == "1"){
+                    gerente_id = "{{auth()->user()->id}}";
+                }else if(for_admin == "2"){
+                    admin_id = "{{auth()->user()->id}}"
+                }else if(for_admin == "4"){
+                    administrativo_id = "{{auth()->user()->id}}";
+                }else if(for_admin == "0"){
+                    user_id = "{{auth()->user()->id}}";
+                }
             }
 
             if(date == ''){
@@ -264,21 +274,27 @@
                 error_message('Ingrese el titulo')
             }else if(description == ''){
                 error_message('Ingresa la descripción')
-            }else if(!for_admin && "{{ auth()->user()->hasRole('Administrativo|Gerente') }}"){
+            }else if(!for_admin){
                 error_message('Selecciona para quien desea crear la tarea')
-            }else if(administrativo_id == '' && (for_admin == 1) && "{{ auth()->user()->hasRole('Gerente') }}"){
-                error_message('Seleccione el administrativo')
-            }else if(admin_id == '' && (for_admin == 2 || for_admin == 3) && "{{ auth()->user()->hasRole('Administrativo|Gerente') }}"){
+            }else if(gerente_id == '' && for_admin == 1){
+                error_message('Seleccione el gerente')
+            }else if(admin_id == '' && for_admin == 2){
                 error_message('Seleccione el administrador')
-            }else if(for_admin == 3 && user_id == ''){
+            }else if(user_id == '' && for_admin == 3){
                 error_message('Seleccione el jefe de huerto')
+            }else if(administrativo_id == '' && for_admin == 4){
+                error_message('Seleccione el administrativo')
             }else if(priority_id == ''){
                 error_message('Seleccione la prioridad')
             }else{
                 if(for_admin == 1){
-                    user_id = administrativo_id;
+                    user_id = gerente_id;
                 }else if(for_admin == 2){
                     user_id = admin_id;
+                }else if(for_admin == 4){
+                    user_id = administrativo_id;
+                }else if(for_admin == 0){
+                    user_id = "{{auth()->user()->id}}";
                 }
                 var data = {
                     date: date,
@@ -388,77 +404,225 @@
             })
         }
 
-        function getJefes(admin_id, atrib = '#user_id', user_id = null)
+        function getUsers(role, atrib = '#user_id', user_id = null)
         {
-            if(admin_id != ''){
-                var url = "{{route('jefes.admin', ":id")}}";
-                url = url.replace(":id", admin_id);
-                $.ajax({
-                    url: url,
-                    dataType: "json",
-                    success: function(response){
-                        $(atrib).empty();
-                        $(atrib).append("<option value=''>Seleccione</option>");
-
-                        $.each(response, function (index, value) {
-                            var selected = value.jefe.id == user_id ? 'selected' : '';
-                            $(atrib).append(`<option value="${value.jefe.id}" ${selected}>${value.jefe.name}</option>`);
-                        })
-                    }
-                });
-            }
+            var url = "{{route('usuarios.by.role')}}";
+            $.ajax({
+                url: url,
+                type: "POST",
+                data: { role },
+                dataType: "json",
+                success: function(response){
+                    $(atrib).empty();
+                    $(atrib).append("<option value=''>Seleccione</option>");
+                    $.each(response, function (index, value) {
+                        var selected = value.id == user_id ? 'selected' : '';
+                        $(atrib).append(`<option value="${value.id}" ${selected}>${value.name}</option>`);
+                    })
+                }
+            });
         }
 
-        function selectAdministrativo()
+        function selectI()
         {
+            $('#gerente_id').empty();
+            $('#gerente_id').append("<option value=''>Seleccione</option>");
+            $('#administrativo_id').empty();
+            $('#administrativo_id').append("<option value=''>Seleccione</option>");
             $('#admin_id').empty();
             $('#admin_id').append("<option value=''>Seleccione</option>");
             $('#user_id').empty();
             $('#user_id').append("<option value=''>Seleccione</option>");
+
+            $('#form-gerente').hide();
+            $('#form-administrativo').hide();
             $('#form-administrador').hide();
             $('#form-jefe').hide();
+        }
+
+        function selectGerente()
+        {
+            $('#administrativo_id').empty();
+            $('#administrativo_id').append("<option value=''>Seleccione</option>");
+            $('#admin_id').empty();
+            $('#admin_id').append("<option value=''>Seleccione</option>");
+            $('#user_id').empty();
+            $('#user_id').append("<option value=''>Seleccione</option>");
+
+            $('#form-gerente').show();
+            $('#form-administrativo').hide();
+            $('#form-administrador').hide();
+            $('#form-jefe').hide();
+
+            $('#gerente_id').val('');
+            getUsers('Gerente', '#gerente_id');
+        }
+
+        function selectAdministrativo()
+        {
+            $('#gerente_id').empty();
+            $('#gerente_id').append("<option value=''>Seleccione</option>");
+            $('#admin_id').empty();
+            $('#admin_id').append("<option value=''>Seleccione</option>");
+            $('#user_id').empty();
+            $('#user_id').append("<option value=''>Seleccione</option>");
+
+            $('#form-gerente').hide();
             $('#form-administrativo').show();
+            $('#form-administrador').hide();
+            $('#form-jefe').hide();
+
             $('#administrativo_id').val('');
+            getUsers('Administrativo', '#administrativo_id');
         }
 
         function selectAdmin()
         {
+            $('#gerente_id').empty();
+            $('#gerente_id').append("<option value=''>Seleccione</option>");
+            $('#administrativo_id').empty();
+            $('#administrativo_id').append("<option value=''>Seleccione</option>");
             $('#user_id').empty();
             $('#user_id').append("<option value=''>Seleccione</option>");
+
+            $('#form-gerente').hide();
+            $('#form-administrativo').hide();
             $('#form-jefe').hide();
-            if("{{auth()->user()->hasRole('Gerente')}}"){
-                $('#form-administrativo').hide();
-            }
             $('#form-administrador').show();
+
             $('#admin_id').val('');
+            getUsers('Admin', '#admin_id')
         }
 
         function selectJefe()
         {
-            if("{{auth()->user()->hasRole('Gerente')}}"){
-                $('#form-administrativo').hide();
-            }
+            $('#gerente_id').empty();
+            $('#gerente_id').append("<option value=''>Seleccione</option>");
+            $('#administrativo_id').empty();
+            $('#administrativo_id').append("<option value=''>Seleccione</option>");
+            $('#admin_id').empty();
+            $('#admin_id').append("<option value=''>Seleccione</option>");
+
+            $('#form-gerente').hide();
+            $('#form-administrativo').hide();
+            $('#form-administrador').hide();
             $('#form-jefe').show();
-            $('#form-administrador').show();
-            $('#admin_id').val('');
+
+            $('#user_id').val('');
+            getUsers('JH', '#user_id');
         }
 
-        function editSelectAdmin()
+        function editSelectI()
         {
+            $('#edit_gerente_id').empty();
+            $('#edit_gerente_id').append("<option value=''>Seleccione</option>");
+            $('#edit_administrativo_id').empty();
+            $('#edit_administrativo_id').append("<option value=''>Seleccione</option>");
+            $('#edit_admin_id').empty();
+            $('#edit_admin_id').append("<option value=''>Seleccione</option>");
             $('#edit_user_id').empty();
             $('#edit_user_id').append("<option value=''>Seleccione</option>");
+
+            $('#edit-form-gerente').hide();
+            $('#edit-form-administrativo').hide();
+            $('#edit-form-administrador').hide();
             $('#edit-form-jefe').hide();
-            $('#edit-form-administrador').show();
-            $('#edit_admin_id').val('');
         }
 
-        function editSelectJefe()
+        function editSelectGerente(user_id)
         {
-            $('#edit-form-jefe').show();
-            $('#edit-form-administrador').show();
-            $('#edit_admin_id').val('');
+            $('#edit_administrativo_id').empty();
+            $('#edit_administrativo_id').append("<option value=''>Seleccione</option>");
+            $('#edit_admin_id').empty();
+            $('#edit_admin_id').append("<option value=''>Seleccione</option>");
             $('#edit_user_id').empty();
             $('#edit_user_id').append("<option value=''>Seleccione</option>");
+
+            $('#edit-form-administrativo').hide();
+            $('#edit-form-administrador').hide();
+            $('#edit-form-jefe').hide();
+
+            if(user_id == '{{auth()->user()->id}}'){
+                $('#edit_gerente_id').empty();
+                $('#edit_gerente_id').append("<option value=''>Seleccione</option>");
+                $('#edit-form-gerente').hide();
+            }else{
+                $('#edit-form-gerente').show();
+                $('#edit_gerente_id').val('');
+                getUsers('Gerente', '#edit_gerente_id', user_id);
+            }
+        }
+
+        function editSelectAdministrativo(user_id)
+        {
+            $('#edit_gerente_id').empty();
+            $('#edit_gerente_id').append("<option value=''>Seleccione</option>");
+            $('#edit_admin_id').empty();
+            $('#edit_admin_id').append("<option value=''>Seleccione</option>");
+            $('#edit_user_id').empty();
+            $('#edit_user_id').append("<option value=''>Seleccione</option>");
+
+            $('#edit-form-gerente').hide();
+            $('#edit-form-administrador').hide();
+            $('#edit-form-jefe').hide();
+
+            if(user_id == '{{auth()->user()->id}}'){
+                $('#edit_administrativo_id').empty();
+                $('#edit_administrativo_id').append("<option value=''>Seleccione</option>");
+                $('#edit-form-administrativo').hide();
+            }else{
+                $('#edit-form-administrativo').show();
+                $('#edit_administrativo_id').val('');
+                getUsers('Administrativo', '#edit_administrativo_id', user_id);
+            }
+        }
+
+        function editSelectAdmin(user_id)
+        {
+            $('#edit_gerente_id').empty();
+            $('#edit_gerente_id').append("<option value=''>Seleccione</option>");
+            $('#edit_administrativo_id').empty();
+            $('#edit_administrativo_id').append("<option value=''>Seleccione</option>");
+            $('#edit_user_id').empty();
+            $('#edit_user_id').append("<option value=''>Seleccione</option>");
+
+            $('#edit-form-gerente').hide();
+            $('#edit-form-administrativo').hide();
+            $('#edit-form-jefe').hide();
+
+            if(user_id == '{{auth()->user()->id}}'){
+                $('#edit_admin_id').empty();
+                $('#edit_admin_id').append("<option value=''>Seleccione</option>");
+                $('#edit-form-administrador').hide();
+            }else{
+                $('#edit-form-administrador').show();
+                $('#edit_admin_id').val('');
+                getUsers('Admin', '#edit_admin_id', user_id);
+            }
+        }
+
+        function editSelectJefe(user_id)
+        {
+            $('#edit_gerente_id').empty();
+            $('#edit_gerente_id').append("<option value=''>Seleccione</option>");
+            $('#edit_administrativo_id').empty();
+            $('#edit_administrativo_id').append("<option value=''>Seleccione</option>");
+            $('#edit_admin_id').empty();
+            $('#edit_admin_id').append("<option value=''>Seleccione</option>");
+
+            $('#edit-form-gerente').hide();
+            $('#edit-form-administrativo').hide();
+            $('#edit-form-administrador').hide();
+
+            if(user_id == '{{auth()->user()->id}}'){
+                $('#edit_user_id').empty();
+                $('#edit_user_id').append("<option value=''>Seleccione</option>");
+                $('#edit-form-jefe').hide();
+            }else{
+                $('#edit-form-jefe').show();
+                $('#edit_user_id').val('');
+                getUsers('JH', '#edit_user_id', user_id);
+            }
         }
     </script>
     @endpush

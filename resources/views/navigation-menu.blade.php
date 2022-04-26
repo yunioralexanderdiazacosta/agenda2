@@ -17,20 +17,10 @@
                 <a class="nav-link" href="{{ url('/dashboard') }}">Tareas</a>
             </li>
             @role('Gerente')
-            <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Administrativos">
-                <a class="nav-link" href="{{ route('administrativos') }}">Administrativos</a>
+            <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Usuarios">
+                <a class="nav-link" href="{{ route('usuarios') }}">Usuarios</a>
             </li>
             @endrole
-            @role('Administrativo|Gerente')
-            <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Administradores">
-                <a class="nav-link" href="{{ route('administradores') }}">Administradores</a>
-            </li>
-            @endrole
-            @hasanyrole('Administrativo|Gerente|Admin')
-            <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Jefes">
-                <a class="nav-link" href="{{route('jefes')}}">Jefes de huerto</a>
-            </li>
-            @endhasanyrole
         </ul>
         <ul class="navbar-nav ml-auto">
             <li class="nav-item">

@@ -27,7 +27,6 @@ class FormHomeworkRequest extends FormRequest
             'date' => 'required',
             'title' => 'required',
             'description' => 'required|string',
-            'user_id' => 'required',
             'priority_id' => 'required',
             'for_admin' => 'required'
         ];

@@ -15,12 +15,6 @@ class EditHomeworkController extends Controller
     {
         $homework = Homework::find($id);
         $data['homework'] = $homework;
-        if($homework->for_admin == 2){
-            $data['administrativo_id'] = AdminUser::select('admin_id')->where('user_id', $homework->user_id)->first()->admin_id;
-        }elseif($homework->for_admin == 3){
-            $data['admin_id']   = JefeHuertoProfile::select('admin_id')->where('user_id', $homework->user_id)->first()->admin_id;
-            $data['administrativo_id'] = AdminUser::select('admin_id')->where('user_id', $data['admin_id'])->first()->admin_id;
-        }
         return response()->json($data);
     }
 }
