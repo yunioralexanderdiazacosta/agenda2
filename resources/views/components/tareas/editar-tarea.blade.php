@@ -23,7 +23,7 @@
 
                 <div class="mb-3">
                     <label for="title">Titulo</label>
-                    <input type="text" class="form-control" placeholder="Ingresa el titulo" @role('JH') readonly @endrole id="edit_title">
+                    <input type="text" class="form-control" placeholder="Ingresa el titulo" @role('JH') readonly @endrole id="edit_title" maxlength="30">
                 </div>
 
 				<div class="mb-3">
