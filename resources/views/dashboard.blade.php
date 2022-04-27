@@ -28,7 +28,7 @@
 
             var calendarEl = document.getElementById('calendar');
             calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'dayGridMonth',
+                initialView: 'dayGridWeek',
                 schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
                 refetchResourcesOnNavigate: false,
                 contentHeight: 600,

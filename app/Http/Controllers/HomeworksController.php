@@ -17,8 +17,9 @@ class HomeworksController extends Controller
         $end            = date('Y-m-d', strtotime($request->end));
         $ids            = $this->get_users();
         $homeworks = DB::table('homework as h')
-            ->select('h.id', 'h.title', 'h.date', 'p.color', 'h.for_admin', 'h.status')
+            ->select('h.id', 'h.title', 'h.date', 'p.color', 'h.for_admin', 'h.status', 'u.name')
             ->join('priorities as p', 'p.id', 'h.priority_id')
+            ->join('users as u', 'u.id', 'h.user_id')
             ->whereIn('h.user_id', $ids)
             ->whereDate('h.date', '>=', $start)
             ->whereDate('h.date',   '<=', $end)
@@ -26,9 +27,9 @@ class HomeworksController extends Controller
             ->transform(function($homework){
                 $data = [
                     'id'    => $homework->id,
-                    'title' => $homework->title,
+                    'title' => $this->getInitialName($homework->name) . ' - ' . $homework->title,
                     'start' => $homework->date,
-                    'color' => $homework->color
+                    'color' => $homework->color,
                 ];
                 if($homework->status == 1){
                     $data['icon'] = "check";
@@ -43,5 +44,15 @@ class HomeworksController extends Controller
         $users_id = HomeworkView::select('user_id')->where('admin_id', Auth::user()->id)->get()->pluck('user_id')->toArray();
         array_push($users_id, Auth::user()->id);
         return $users_id;
+    }
+
+    private function getInitialName($name)
+    {
+        $initials = '';
+        $explode = explode(" ", $name);
+        foreach($explode as $x){
+            $initials .=  $x[0];
+        }
+        return strtoupper($initials);
     }
 }
