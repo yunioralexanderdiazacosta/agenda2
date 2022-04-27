@@ -53,7 +53,6 @@
                         @endforeach
                     </tbody>
                     </table>
-                    {{ $users2->links() }}
                 </div>
                 @else
                 <div class="alert alert-primary" role="alert">

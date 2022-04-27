@@ -11,6 +11,9 @@ class UsuariosController extends Controller
 {
     public function index()
     {
+        if(Auth::user()->is_admin == 0){
+            abort(403);
+        }
         return view('usuarios');
     }
 

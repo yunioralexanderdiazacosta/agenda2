@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Hash;
 use Jantinnerezo\LivewireAlert\LivewireAlert;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Illuminate\Pagination\Paginator;
 
 class UsuariosComponent extends Component
 {
@@ -41,7 +42,8 @@ class UsuariosComponent extends Component
     {
         $usuarios   = User::with(['roles', 'field'])->paginate(5);
         $fields     = Field::all();
-        $users      = User::role($this->role)->whereNotIn('id', [$this->admin_id])->paginate(10)->through(function($user){
+
+        $users      = User::role($this->role)->whereNotIn('id', [$this->admin_id])->get()->transform(function($user){
             return [
                 'id'        => $user->id,
                 'name'      => $user->name,
@@ -49,7 +51,8 @@ class UsuariosComponent extends Component
                 'checked'   => $this->checkedCreate($user->id)
             ];
         });
-        $users2     = User::role($this->role2)->whereNotIn('id', [$this->admin_id2])->paginate(10)->through(function($user){
+
+        $users2     = User::role($this->role2)->whereNotIn('id', [$this->admin_id2])->get()->transform(function($user){
             return [
                 'id'        => $user->id,
                 'name'      => $user->name,
@@ -215,36 +218,10 @@ class UsuariosComponent extends Component
 
     public function confirmed()
     {
-        /*
-        //eliminar tareas gerente
         Homework::where('user_id', $this->user_id)->delete();
-        $admin = Auth::user();
-        //eliminar relacion con administrativo
-        $admin->users()->detach($this->user_id);
-        $gerente_users = AdminUser::where('admin_id', $this->user_id)->get();
-        foreach($gerente_users as $value){
-            //eliminar tareas administrador
-            Homework::where('user_id', $value->user_id)->delete();
-            $admin_users = JefeHuertoProfile::where('admin_id', $value->user_id)->get();
-            foreach($admin_users as $value2){
-                //eliminar tareas JH
-                Homework::where('user_id', $value2->user_id)->delete();
-                //eliminar perfil JH
-                JefeHuertoProfile::where('user_id', $value2->user_id)->delete();
-                //eliminar usuario JH
-                User::where('id', $value2->user_id)->delete();
-            }
-            //eliminar usuario administrador
-            AdminUser::where('user_id', $value->user_id)->delete();
-            User::where('id', $value->user_id)->delete();
-        }
-        //eliminar relacion gerente-administrador
-        $gerente_users = AdminUser::where('admin_id', $this->user_id)->delete();
-        //eliminar gerente
         $user = User::find($this->user_id);
         $user->delete();
         $this->alert('success', 'Eliminado correctamente');
-        */
     }
 
     private function resetInputFields()

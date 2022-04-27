@@ -17,9 +17,11 @@
                 <a class="nav-link" href="{{ url('/dashboard') }}">Tareas</a>
             </li>
             @role('Gerente')
-            <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Usuarios">
-                <a class="nav-link" href="{{ route('usuarios') }}">Usuarios</a>
-            </li>
+                @if(auth()->user()->is_admin == 1)
+                    <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Usuarios">
+                        <a class="nav-link" href="{{ route('usuarios') }}">Usuarios</a>
+                    </li>
+                @endif
             @endrole
         </ul>
         <ul class="navbar-nav ml-auto">

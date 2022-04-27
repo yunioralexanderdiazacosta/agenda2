@@ -50,7 +50,7 @@
 				</div>
 
 				<div class="mb-3">
-					<label>Para</label><br>
+					<label>Rol</label><br>
 					<div class="form-check form-check-inline">
 						<input class="form-check-input" type="radio" wire:model="role_id" id="gerente" value="Gerente">
 						<label class="form-check-label" for="administrativo">Gerente</label>
