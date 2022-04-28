@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\DB;
 
 class HomeworksController extends Controller
 {
-    public function __invoke($id='', Request $request)
+    public function __invoke($id=0, Request $request)
     {
         $start          = date('Y-m-d', strtotime($request->start));
         $end            = date('Y-m-d', strtotime($request->end));

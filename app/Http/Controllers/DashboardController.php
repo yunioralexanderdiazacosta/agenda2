@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
-    public function __invoke($id = '', $date = '', $view = '')
+    public function __invoke($id = 0, $date = '', $view = '')
     {
         $priorities = Priority::all();
         $teams = DB::table('users as u')
