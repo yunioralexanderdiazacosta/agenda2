@@ -27,10 +27,10 @@ Route::get('/', function () {
 
 Route::middleware(['auth:sanctum', 'verified'])->group(function(){
 
-    Route::get('/dashboard', DashboardController::class)->name('dashboard');
+    Route::get('/dashboard/{id?}/{date?}/{view?}', DashboardController::class)->name('dashboard');
     Route::get('/usuarios', [UsuariosController::class, 'index'])->name('usuarios');
     Route::post('/usuarios', [UsuariosController::class, 'getByRole'])->name('usuarios.by.role');
-    Route::get('/homeworks', HomeworksController::class)->name('homeworks');
+    Route::get('/homeworks/{id?}', HomeworksController::class)->name('homeworks');
     Route::post('/homework/create', CreateHomeworkController::class)->name('homework.create');
     Route::get('/homework/{id}/edit', EditHomeworkController::class)->name('homework.edit');
     Route::put('/homework/{id}/update', UpdateHomeworkController::class)->name('homework.update');

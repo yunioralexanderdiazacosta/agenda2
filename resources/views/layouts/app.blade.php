@@ -67,6 +67,7 @@
     <script src="{{ asset('plugins/fullcalendar/lib/main.min.js') }}"></script>
     <script src="{{ asset('plugins/fullcalendar/lib/locales/es.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.18/dist/sweetalert2.all.min.js"></script> 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>  
     <script>
         feather.replace({ 'aria-hidden': 'true' })
     </script>

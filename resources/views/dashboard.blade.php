@@ -1,12 +1,27 @@
 <x-app-layout>
     @include('components.tareas.crear-tarea')
     @include('components.tareas.editar-tarea')
-    @hasanyrole('Administrativo|Gerente|Admin')
-    <button type="button" class="btn btn-primary mb-3 btn-lg"  data-bs-toggle="modal" data-bs-target="#create-homework">
-        Agregar
-    </button>
-    @endhasanyrole
-
+    <div class="row">
+        <div class="col-lg-1">
+            <label class="invisible">Usuario</label>
+            <button type="button" class="btn btn-primary mb-3"  data-bs-toggle="modal" data-bs-target="#create-homework">
+                Agregar
+            </button>
+        </div>
+        <div class="col-lg-4">
+            <input type="hidden" id="start_date">
+            <input type="hidden" id="start_view">
+            <div class="form-group">
+                <label>Usuario</label>
+                <select class="form-control" id="team_id" onchange="filterUser()">
+                    <option value=0>Todos</option>
+                    @foreach($teams as $team)
+                        <option value="{{$team->id}}" @if($team->id == $id) selected @endif>{{$team->name}}</option>
+                    @endforeach
+                </select>
+            </div>
+        </div>
+    </div>
     <div class="row" style="position: inherit;">
         <div class="col-lg-12">
             <hr class="mt-0">
@@ -19,7 +34,7 @@
     <script>
         var calendar;
         $(document).ready(function () {
-            var SITEURL = "{{ route('homeworks') }}";
+            var SITEURL = "{{ route('homeworks', $id) }}";
             $.ajaxSetup({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -28,7 +43,8 @@
 
             var calendarEl = document.getElementById('calendar');
             calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'dayGridWeek',
+                initialView: "{{$view}}" != "" ? "{{$view}}" : 'dayGridWeek',
+                initialDate: "{{$date}}" != "" ? "{{$date}}"  : null,
                 schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
                 refetchResourcesOnNavigate: false,
                 contentHeight: 600,
@@ -163,6 +179,15 @@
                         e.el.prepend(i);
                     }
                 },
+
+                datesSet: function(info) {
+                    if(info.view.type == 'dayGridMonth'){
+                        $('#start_date').val(moment(info.view.currentStart).format("YYYY-MM-DD"))
+                    }else{
+                        $('#start_date').val(moment(info.startStr).format("YYYY-MM-DD"))
+                    }
+                    $('#start_view').val(info.view.type);
+                }
 
             });
             calendar.render();
@@ -623,6 +648,22 @@
                 $('#edit_user_id').val('');
                 getUsers('JH', '#edit_user_id', user_id);
             }
+        }
+
+        function filterUser()
+        {
+            var id = $('#team_id').val();
+            var date = $('#start_date').val();
+            var view = $('#start_view').val();
+            data = {
+                id: id,
+                date: date
+            }
+            var url = "{{route('dashboard', [':id' , ':date', ':view'])}}";
+            url = url.replace(":id", id);
+            url = url.replace(":date", date);
+            url = url.replace(":view", view);
+            window.location = url;
         }
     </script>
     @endpush

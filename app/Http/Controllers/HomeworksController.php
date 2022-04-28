@@ -11,11 +11,15 @@ use Illuminate\Support\Facades\DB;
 
 class HomeworksController extends Controller
 {
-    public function __invoke(Request $request)
+    public function __invoke($id='', Request $request)
     {
         $start          = date('Y-m-d', strtotime($request->start));
         $end            = date('Y-m-d', strtotime($request->end));
-        $ids            = $this->get_users();
+        if($id == '' || $id == 0){
+            $ids        = $this->get_users();
+        }else{
+            $ids        = [$id];
+        }
         $homeworks = DB::table('homework as h')
             ->select('h.id', 'h.title', 'h.date', 'p.color', 'h.for_admin', 'h.status', 'u.name')
             ->join('priorities as p', 'p.id', 'h.priority_id')
