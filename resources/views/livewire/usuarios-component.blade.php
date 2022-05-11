@@ -2,7 +2,7 @@
     @include('livewire.usuarios.usuario-form-component')
     @include('livewire.usuarios.permisos-crear-component')
     @include('livewire.usuarios.permisos-ver-component')
-    <button type="button" class="btn btn-primary mb-3 btn-lg" wire:click="add">
+    <button type="button" class="btn btn-primary mb-4" wire:click="add">
         Agregar
     </button>
     @if(count($usuarios) > 0)
@@ -15,6 +15,7 @@
                 <th scope="col">Correo Electronico</th>
                 <th scope="col">Campo</th>
                 <th scope="col">Rol</th>
+                <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -27,10 +28,10 @@
                         <td>@if($value->roles[0]) {{$value->roles[0]->name}} @endif</td>
                         <td>
                             <div class="btn-group">
-                                <button type="button" wire:click="pView({{ $value->id }})" class="btn btn-outline-primary">P. Ver</button>
-                                <button type="button" wire:click="pCreate({{ $value->id }})" class="btn btn-outline-primary">P. Crear</button>
-                                <button type="button" wire:click="edit({{ $value->id }})" class="btn btn-outline-primary">Editar</button>
-                                <button type="button" wire:click="delete({{ $value->id }})"class="btn btn-outline-primary">Borrar</button>
+                                <button type="button" wire:click="pView({{ $value->id }})" class="btn btn-outline-primary f-10">P. Ver</button>
+                                <button type="button" wire:click="pCreate({{ $value->id }})" class="btn btn-outline-primary f-10">P. Crear</button>
+                                <button type="button" wire:click="edit({{ $value->id }})" class="btn btn-outline-primary f-10">Editar</button>
+                                <button type="button" wire:click="delete({{ $value->id }})"class="btn btn-outline-primary f-10">Borrar</button>
                             </div>
                         </td>
                     </tr>

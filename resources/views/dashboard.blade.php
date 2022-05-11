@@ -1,17 +1,14 @@
 <x-app-layout>
-    @push('styles-calendar')
-         <link rel="stylesheet" href="{{ asset('css/estilos.css') }}">
-    @endpush
     @include('components.tareas.crear-tarea')
     @include('components.tareas.editar-tarea')
     <div class="row mb-1">
-        <div class="col-lg-1 col-2">
+        <div class="col-lg-1 col-3">
             <label class="invisible">Usuario</label>
             <button type="button" class="btn btn-primary mb-3 add_button"  data-bs-toggle="modal" data-bs-target="#create-homework">
                 Agregar
             </button>
         </div>
-        <div class="col-lg-4 col-10">
+        <div class="col-lg-4 col-9">
             <input type="hidden" id="start_date">
             <input type="hidden" id="start_view">
             <div class="form-group">
