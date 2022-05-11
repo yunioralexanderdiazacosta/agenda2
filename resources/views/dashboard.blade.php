@@ -123,12 +123,12 @@
                             $('#edit_comment').val(response.homework.comment);
                             $('#for_admin').val(response.homework.for_admin);
                             if(response.homework.user_id == '{{ auth()->user()->id }}' && response.homework.is_own == 0){
-                                $("#eliminar").show();
+                                $("#eliminar").hide();
                                 $("#title_modal").text('Ver tarea');
                                 $("#edit_date").prop('readonly', true);
                                 $("#edit_title").prop('readonly', true);
                                 $("#edit_description").prop('readonly', true);
-                                $("#edit_priority_id").css("pointer-events", "auto");
+                                $("#edit_priority_id").css("pointer-events", "none");
                                 $("#selected_option").css("display", "none");
                                 $("#view").val(1);
                             }else{
@@ -137,7 +137,7 @@
                                 $("#edit_date").prop('readonly', false);
                                 $("#edit_title").prop('readonly', false);
                                 $("#edit_description").prop('readonly', false);
-                                $("#edit_priority_id").css("pointer-events", "none");
+                                $("#edit_priority_id").css("pointer-events", "auto");
                                 $("#selected_option").css("display", "block");
                                 $("#view").val(0);
                             }
