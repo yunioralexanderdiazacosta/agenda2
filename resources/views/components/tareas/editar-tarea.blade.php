@@ -10,10 +10,7 @@
 				</button>
 			</div>
 			<div class="modal-body">
-				<div class="form-check float-right">
-					<input type="checkbox" class="form-check-input" id="status">
-					<label class="form-check-label" for="exampleCheck1">Realizada</label>
-				</div>
+				
                 <input type="hidden" id="id">
 				<input type="hidden" id="view">
                 <div class="mb-3">
@@ -95,6 +92,11 @@
 				<div class="mb-3">
 					<label for="description">Comentario</label>
 					<textarea class="form-control"  rows="3" id="edit_comment" placeholder="Ingresa el comentario"></textarea>
+				</div>
+				
+				<div class="form-check float-right">
+					<input type="checkbox" class="form-check-input" id="status">
+					<label class="form-check-label" for="exampleCheck1">Realizada</label>
 				</div>
 			</div>
 			<div class="modal-footer">
