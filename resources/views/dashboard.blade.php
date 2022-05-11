@@ -1,14 +1,171 @@
 <x-app-layout>
+    @push('styles-calendar')
+    <style>
+          @media(max-width: 991px) {
+        	body{
+        		font-size: 0.8rem;
+        	}
+            .navbar-brand{
+             font-size: 1rem;
+            }
+
+            .form-control{
+                font-size: 10px;
+            }
+
+            label{
+                font-size: 10px;
+            }
+
+            #btn, #filtrarResultados{
+                font-size: 10px;
+            }
+
+            table.fc-col-header {
+                font-size: 12px;
+            }
+
+            #btn-calendarTwo{
+                display: none !important;
+            }
+
+            #exportar-excel{
+                display: none !important;
+            }
+
+            .m-xs-1{
+                margin-left: 0.2rem !important;
+            }
+
+        	.ml-1{
+        		margin-left: 0 !important;
+        	}
+
+        	.ml-3{
+        		margin-left: 0 !important;
+        	}
+
+        	.mr-1{
+        		margin-right: 0 !important;
+        	}
+
+        	.mt-3{
+        		margin-top: 0 !important;
+        	}
+
+        	.top-1{
+        		margin-top: 0.8rem !important;
+        	}
+
+        	.mt-2{
+        		margin-top: 0rem !important;
+        	}
+
+            .align-right{
+                padding-right: 0 !important;
+            }
+
+            .align-left{
+                padding-left: 1px !important; 
+            }
+
+            .margin-top{
+                margin-top: 0 !important;
+            }
+
+            .form-group, .accion{
+                margin-bottom: 0 !important;
+            }
+
+        	.plan-desktop{
+        		display: none !important;
+        	}
+
+        	.plan-mobile{
+        		display: inline-block !important;
+        	}
+
+        	.fc-daygrid-week-number{
+        		font-size: 8px !important;
+        	}
+
+            .add_button{
+                margin-top: 0rem !important;
+                padding: 0.25rem 0.5rem !important;
+                font-size: 0.875rem !important;
+                line-height: 1.5 !important;
+                float: right;
+            }
+
+        	.fc-button, .export{
+        		padding: 0.25rem 0.5rem !important;
+				font-size: 0.875rem !important;
+				line-height: 1.5 !important;
+				border-radius: 0 !important;
+        	}
+
+        	.fc-direction-ltr .fc-toolbar>*>:not(:first-child) {
+    			margin-left: 0 !important;
+			}
+
+			.fc-toolbar-chunk{
+		  		text-align: center !important;
+		  	}
+
+		  	.fc-toolbar.fc-header-toolbar {
+		    	display: flex;
+		    	flex-direction: column;
+		  	}
+
+		  	.fc-toolbar.fc-header-toolbar .fc-left {
+		    	order: 3;
+		  	}
+
+		  	.fc-toolbar.fc-header-toolbar .fc-center {
+		    	order: 1;
+		  	}
+
+		  	.fc-toolbar.fc-header-toolbar .fc-right {
+		    	order: 2;
+		  	}
+
+            body.sidenav-toggled .navbar-sidenav .nav-item, body.sidenav-toggled .navbar-sidenav .nav-link {
+                width: 100% !important;
+            }
+
+            body.sidenav-toggled .navbar-sidenav {
+                overflow-x: auto;
+                width: 100%;
+            }
+
+            .fc .fc-datagrid-cell-cushion, .fc-datagrid-cell-main{
+                font-size: 10px !important;
+            }
+
+            .mb-3{
+                margin-bottom: 0px !important;
+            }
+
+		}
+        @media(max-width: 767px) {
+            .fc .fc-datagrid-cell-cushion, .fc-datagrid-cell-main{
+                font-size: 8px !important;
+            }
+        }    
+      
+    </style>
+    </style>
+    @endpush
     @include('components.tareas.crear-tarea')
     @include('components.tareas.editar-tarea')
-    <div class="row">
-        <div class="col-lg-1">
+    <div class="row mb-1">
+        <div class="col-lg-1 col-2">
             <label class="invisible">Usuario</label>
-            <button type="button" class="btn btn-primary mb-3"  data-bs-toggle="modal" data-bs-target="#create-homework">
+            <button type="button" class="btn btn-primary mb-3 add_button"  data-bs-toggle="modal" data-bs-target="#create-homework">
                 Agregar
             </button>
         </div>
-        <div class="col-lg-4">
+        <div class="col-lg-4 col-10">
             <input type="hidden" id="start_date">
             <input type="hidden" id="start_view">
             <div class="form-group">
@@ -24,7 +181,6 @@
     </div>
     <div class="row" style="position: inherit;">
         <div class="col-lg-12">
-            <hr class="mt-0">
             <div id='loading'>Cargando...</div>
             <div id='calendar' style="max-height: 720px !important"></div>
         </div>

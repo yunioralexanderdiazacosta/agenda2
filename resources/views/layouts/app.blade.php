@@ -18,7 +18,7 @@
     <link rel="stylesheet" href="{{ asset('css/bootstrap-toggle.min.css') }}">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
     @livewireStyles
-
+    @stack('styles-calendar')
     <!-- Scripts -->
     <script src="{{ mix('js/app.js') }}" defer></script>
 </head>
@@ -59,6 +59,8 @@
     </script>
     <x-livewire-alert::scripts />
     <script src="{{ asset('js/jquery.min.js') }}"></script>
+    <script src="{{ asset('popper/popper.min.js') }}"></script>
+    <script src="{{ asset('js/bootstrap.min.js') }}"></script>
     <script src="{{ asset('js/bootstrap-toggle.min.js') }}"></script>
     <script src="{{ asset('js/toggle-menu.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
