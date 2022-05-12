@@ -1,7 +1,7 @@
 <div class="modal fade" id="edit-homework" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
 	<div class="modal-dialog modal-lg">
 	  	<div class="modal-content">
-			<div class="modal-header">
+			<div class="modal-header" style="background-color:blue;color:white">
 				<h5 class="modal-title" id="title_modal">
                    Editar tarea
 				</h5>
@@ -11,7 +11,7 @@
 			</div>
 			<div class="modal-body">
 				<div class="text-right" id="created_by">
-					Tarea dada por: <span id="admin_name"></span>
+					Tarea creada por: <span id="admin_name"></span>
 				</div>
                 <input type="hidden" id="id">
 				<input type="hidden" id="view">
@@ -96,8 +96,8 @@
 					<textarea class="form-control"  rows="3" id="edit_comment" placeholder="Ingresa el comentario"></textarea>
 				</div>
 
-				<div class="float-right">
-					<input id="status" type="checkbox" data-width="125" data-toggle="toggle" data-on="Realizada" data-off="Pendiente" data-onstyle="success" data-offstyle="dark">
+				<div class="float-right mt-1">
+					<input id="status" type="checkbox" data-width="110" data-toggle="toggle" data-on="Realizada" data-off="Pendiente" data-onstyle="success" data-offstyle="dark">
 				</div>
 			</div>
 			<div class="modal-footer">
