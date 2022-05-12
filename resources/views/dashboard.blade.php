@@ -160,11 +160,14 @@
                                     break;
                             }
                             if(response.homework.status == 1){
-                                var status = true;
+                                $('#status').prop('checked', true);
+                                $('.toggle').removeClass("btn-dark off")
+                                $('.toggle').addClass("btn-success");
                             }else{
-                                var status = false;
+                                $('#status').prop('checked', false);
+                                $('.toggle').removeClass("btn-success")
+                                $('.toggle').addClass("btn-dark off");
                             }
-                            $('#status').prop('checked', status);
                             $('#edit_priority_id').val(response.homework.priority_id);
                         }
                     });
@@ -286,7 +289,7 @@
                     admin_id = "{{auth()->user()->id}}"
                 }else if(for_admin == "4"){
                     administrativo_id = "{{auth()->user()->id}}";
-                }else if(for_admin == "0"){
+                }else if(for_admin == "0" || for_admin == "3"){
                     user_id = "{{auth()->user()->id}}";
                 }
             }

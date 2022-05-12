@@ -93,10 +93,9 @@
 					<label for="description">Comentario</label>
 					<textarea class="form-control"  rows="3" id="edit_comment" placeholder="Ingresa el comentario"></textarea>
 				</div>
-				
-				<div class="form-check float-right">
-					<input type="checkbox" class="form-check-input" id="status">
-					<label class="form-check-label" for="exampleCheck1">Realizada</label>
+
+				<div class="float-right">
+					<input id="status" type="checkbox" data-width="125" data-toggle="toggle" data-on="Realizada" data-off="Pendiente" data-onstyle="success" data-offstyle="dark">
 				</div>
 			</div>
 			<div class="modal-footer">
