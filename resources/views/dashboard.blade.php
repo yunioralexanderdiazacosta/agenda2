@@ -5,13 +5,13 @@
         <input type="hidden" id="start_date">
         <input type="hidden" id="start_view">
 
-        <div class="col-auto">
+        <div class="col-lg-auto col-md-auto col-auto">
             <label class="invisible">Usuario</label><br>
             <button type="button" class="btn btn-primary add_button"  data-bs-toggle="modal" data-bs-target="#create-homework">
                 Agregar
             </button>
         </div>
-        <div class="col-2">
+        <div class="col-lg-4 col-md-4 col-9">
             <label>Usuario</label>
             <select class="form-control" id="team_id" onchange="filterUser()">
                 <option value=0>Todos</option>
@@ -127,6 +127,8 @@
                                 $("#edit_priority_id").css("pointer-events", "none");
                                 $("#selected_option").css("display", "none");
                                 $("#view").val(1);
+                                $("#created_by").show();
+                                $("#admin_name").text(response.homework.admin ? response.homework.admin.name : '');
                             }else{
                                 $("#eliminar").show();
                                 $("#title_modal").text('Editar tarea');
@@ -136,6 +138,7 @@
                                 $("#edit_priority_id").css("pointer-events", "auto");
                                 $("#selected_option").css("display", "block");
                                 $("#view").val(0);
+                                $("#created_by").hide();
                             }
                             switch(response.homework.for_admin){
                                 case 0:

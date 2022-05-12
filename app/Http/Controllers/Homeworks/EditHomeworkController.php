@@ -13,7 +13,7 @@ class EditHomeworkController extends Controller
 {
     public function __invoke(int $id)
     {
-        $homework = Homework::find($id);
+        $homework = Homework::with('admin')->find($id);
         $data['homework'] = $homework;
         return response()->json($data);
     }

@@ -10,7 +10,9 @@
 				</button>
 			</div>
 			<div class="modal-body">
-				
+				<div class="text-right" id="created_by">
+					Tarea dada por: <span id="admin_name"></span>
+				</div>
                 <input type="hidden" id="id">
 				<input type="hidden" id="view">
                 <div class="mb-3">
