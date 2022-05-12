@@ -11,7 +11,7 @@
                 Agregar
             </button>
         </div>
-        <div class="col-auto">
+        <div class="col-2">
             <label>Usuario</label>
             <select class="form-control" id="team_id" onchange="filterUser()">
                 <option value=0>Todos</option>

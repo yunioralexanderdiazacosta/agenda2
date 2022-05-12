@@ -144,6 +144,9 @@
     }
 
 }
+
+
+
 @media(max-width: 767px) {
     .fc .fc-datagrid-cell-cushion, .fc-datagrid-cell-main{
         font-size: 8px !important;
