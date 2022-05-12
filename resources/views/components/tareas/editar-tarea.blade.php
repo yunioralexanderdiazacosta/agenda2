@@ -96,7 +96,7 @@
 					<textarea class="form-control"  rows="2" id="edit_comment" placeholder="Ingresa el comentario"></textarea>
 				</div>
 
-				<div class="float-right mt-1">
+				<div class="float-right mt-2">
 					<input id="status" type="checkbox" data-width="110" data-toggle="toggle" data-on="Realizada" data-off="Pendiente" data-onstyle="success" data-offstyle="dark">
 				</div>
 			</div>
