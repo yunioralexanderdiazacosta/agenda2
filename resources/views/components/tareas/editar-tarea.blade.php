@@ -93,7 +93,7 @@
 
 				<div class="mb-3">
 					<label for="description">Comentario</label>
-					<textarea class="form-control"  rows="3" id="edit_comment" placeholder="Ingresa el comentario"></textarea>
+					<textarea class="form-control"  rows="2" id="edit_comment" placeholder="Ingresa el comentario"></textarea>
 				</div>
 
 				<div class="float-right mt-1">
