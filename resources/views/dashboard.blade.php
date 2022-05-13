@@ -12,7 +12,8 @@
         
         <div class="col-lg-4 col-md-4 col-9">
             <select class="form-control" id="team_id" onchange="filterUser()">
-                <option value=0>Todos</option>
+            <option disabled value="" selected>Seleccione Usuario</option>    
+            <option value=0>Todos</option>
                 @foreach($teams as $team)
                     <option value="{{$team->id}}" @if($team->id == $id) selected @endif>{{$team->name}}</option>
                 @endforeach
