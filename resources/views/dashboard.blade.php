@@ -6,7 +6,7 @@
         <input type="hidden" id="start_view">
 
         <div class="col-lg-auto col-md-auto col-auto">
-            <label class="invisible">Usuario</label><br>
+            <label class="invisible">Usuario</label>
             <button type="button" class="btn btn-primary add_button"  data-bs-toggle="modal" data-bs-target="#create-homework">
                 Agregar
             </button>
