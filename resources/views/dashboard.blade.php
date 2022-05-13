@@ -11,7 +11,7 @@
                 Agregar
             </button>
         </div>
-        </div>
+        
         <div class="col-lg-4 col-md-4 col-9">
             <select class="form-control" id="team_id" onchange="filterUser()">
                 <option value=0>Todos</option>
@@ -19,6 +19,7 @@
                     <option value="{{$team->id}}" @if($team->id == $id) selected @endif>{{$team->name}}</option>
                 @endforeach
             </select>
+        </div>
         </div>
     </div>
     <div class="row" style="position: inherit;">
