@@ -5,14 +5,12 @@
         <input type="hidden" id="start_date">
         <input type="hidden" id="start_view">
         <div class="col-lg-auto col-md-auto col-auto">
-            <label class="invisible">Usuario</label><br>
             <button type="button" class="btn btn-primary add_button"  data-bs-toggle="modal" data-bs-target="#create-homework">
                 Agregar
             </button>
         </div>
         
         <div class="col-lg-4 col-md-4 col-9">
-            <label>Usuario</label>
             <select class="form-control" id="team_id" onchange="filterUser()">
                 <option value=0>Todos</option>
                 @foreach($teams as $team)

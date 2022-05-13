@@ -152,3 +152,11 @@
         font-size: 8px !important;
     }
 }
+
+@media(max-width: 280px) {
+    .col-9{
+        -ms-flex: 0 0 70% !important;
+        flex: 0 0 70% !important;
+        max-width: 70% !important;
+    }
+}
