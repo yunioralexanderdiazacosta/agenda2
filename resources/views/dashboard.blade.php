@@ -4,12 +4,13 @@
     <div class="form-row align-items-center mb-4">
         <input type="hidden" id="start_date">
         <input type="hidden" id="start_view">
-
+        <div class="row show-grid">
         <div class="col-lg-auto col-md-auto col-auto">
             <label class="invisible">Usuario</label>
             <button type="button" class="btn btn-primary add_button"  data-bs-toggle="modal" data-bs-target="#create-homework">
                 Agregar
             </button>
+        </div>
         </div>
         <div class="col-lg-4 col-md-4 col-9">
             <select class="form-control" id="team_id" onchange="filterUser()">
