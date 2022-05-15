@@ -82,6 +82,10 @@
 						@endforeach
 					</select>
 				</div>
+				<div class="form-check float-right">
+					<input type="checkbox" checked class="form-check-input" id="send_notification">
+					<label class="form-check-label" for="send_notification">Enviar aviso por email</label>
+				</div>
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>

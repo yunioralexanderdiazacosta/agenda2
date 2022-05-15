@@ -220,6 +220,11 @@
             var admin_id = $('#admin_id').val();
             var administrativo_id = $('#administrativo_id').val();
             var user_id = $('#user_id').val();
+            if($('#send_notification').prop('checked')){
+                var send_notification = 1;
+            }else{
+                var send_notification = 0;
+            }
 
             if(date == ''){
                 error_message('Ingrese/seleccione la fecha')
@@ -249,14 +254,27 @@
                 }else if(for_admin == 0){
                     user_id = '';
                 }
+
+                Swal.fire({
+                    title: 'Procesando',
+                    allowEscapeKey: false,
+                    allowOutsideClick: false,
+                    background: '#19191a',
+                    showConfirmButton: false,
+                    onOpen: ()=>{
+                        Swal.showLoading();
+                    }
+                });
                 $.ajax({
                     url: "{{route('homework.create')}}",
                     type: "POST",
-                    data: { date, title, description, user_id, priority_id, for_admin },
+                    data: { date, title, description, user_id, priority_id, for_admin, send_notification },
                     success: function(data){
                         if(data.success){
+                            swal.close();
                             success_message('Insertado correctamente')
                         }else{
+                            swal.close();
                             error_message('Ocurrio un error interno')
                         }
                     }
