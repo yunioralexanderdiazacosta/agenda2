@@ -76,6 +76,13 @@
                     bool ? 'block' : 'none';
                 },
 
+                dateClick: function(info) {
+                    //create-homework
+                    //alert('Clicked on: ' + info.dateStr);
+                    $('#create-homework').modal('show');
+                    $('#date').val(info.dateStr);
+                },
+
                 //UPDATE AL MOVER REGISTRO
                 eventDrop: function(info) {
                     var dates = [];
